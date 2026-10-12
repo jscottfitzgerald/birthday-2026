@@ -1,0 +1,309 @@
+/* ============================================
+   The Birthday Games - Shared Theme
+   Cute & romantic: pink gradients, floating hearts
+   ============================================ */
+
+:root {
+  --pink-light: #ffd9e8;
+  --pink-mid: #ff9ec7;
+  --pink-deep: #ff6fa5;
+  --pink-darker: #d94c8a;
+  --gold: #ffd59e;
+  --text-dark: #5a2340;
+  --card-bg: rgba(255, 255, 255, 0.85);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+}
+
+body {
+  font-family: 'Segoe UI', 'Trebuchet MS', sans-serif;
+  background: linear-gradient(160deg, var(--pink-light) 0%, var(--pink-mid) 55%, var(--pink-deep) 100%);
+  color: var(--text-dark);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  position: relative;
+  overflow-x: hidden;
+  text-align: center;
+}
+
+/* Floating hearts background */
+.hearts-bg {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.heart {
+  position: absolute;
+  bottom: -10%;
+  font-size: 1.5rem;
+  opacity: 0.6;
+  animation: floatUp linear infinite;
+  user-select: none;
+}
+
+@keyframes floatUp {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.7;
+  }
+  90% {
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateY(-110vh) rotate(25deg);
+    opacity: 0;
+  }
+}
+
+.container {
+  position: relative;
+  z-index: 1;
+  max-width: 520px;
+  width: 100%;
+}
+
+h1, h2 {
+  text-shadow: 0 2px 8px rgba(255, 255, 255, 0.4);
+}
+
+h1 {
+  font-size: 2.1rem;
+  margin-bottom: 4px;
+}
+
+.subtitle {
+  font-size: 1rem;
+  margin-bottom: 28px;
+  opacity: 0.85;
+}
+
+.card {
+  background: var(--card-bg);
+  border-radius: 24px;
+  padding: 28px 22px;
+  box-shadow: 0 10px 30px rgba(217, 76, 138, 0.25);
+  margin-bottom: 20px;
+  backdrop-filter: blur(4px);
+}
+
+/* Puzzle tiles on landing page */
+.puzzle-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.puzzle-tile {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: var(--card-bg);
+  border-radius: 18px;
+  padding: 18px 20px;
+  box-shadow: 0 6px 18px rgba(217, 76, 138, 0.2);
+  text-decoration: none;
+  color: var(--text-dark);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.puzzle-tile.unlocked:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 24px rgba(217, 76, 138, 0.3);
+}
+
+.puzzle-tile.locked {
+  opacity: 0.55;
+  cursor: not-allowed;
+  filter: grayscale(0.4);
+}
+
+.puzzle-icon {
+  font-size: 1.8rem;
+  flex-shrink: 0;
+}
+
+.puzzle-info {
+  text-align: left;
+  flex: 1;
+}
+
+.puzzle-info .title {
+  font-weight: 600;
+  font-size: 1.05rem;
+}
+
+.puzzle-info .status {
+  font-size: 0.85rem;
+  opacity: 0.75;
+}
+
+/* Countdown display */
+.countdown {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 18px 0 8px;
+  flex-wrap: wrap;
+}
+
+.countdown-unit {
+  background: linear-gradient(160deg, #fff 0%, var(--pink-light) 100%);
+  border-radius: 14px;
+  padding: 12px 10px;
+  min-width: 68px;
+  box-shadow: inset 0 0 0 2px rgba(255, 111, 165, 0.25);
+}
+
+.countdown-unit .value {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--pink-darker);
+  line-height: 1;
+}
+
+.countdown-unit .label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.7;
+  margin-top: 4px;
+}
+
+/* Answer form */
+.answer-form {
+  margin-top: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: stretch;
+}
+
+.answer-form label {
+  font-size: 0.9rem;
+  opacity: 0.85;
+}
+
+.answer-form input[type="text"] {
+  padding: 14px 16px;
+  font-size: 1.1rem;
+  border-radius: 14px;
+  border: 2px solid var(--pink-mid);
+  text-align: center;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.answer-form input[type="text"]:focus {
+  border-color: var(--pink-darker);
+}
+
+.btn {
+  display: inline-block;
+  background: linear-gradient(135deg, var(--pink-deep), var(--pink-darker));
+  color: #fff;
+  border: none;
+  padding: 14px 20px;
+  border-radius: 14px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  box-shadow: 0 6px 16px rgba(217, 76, 138, 0.35);
+  transition: transform 0.12s ease;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.feedback {
+  min-height: 24px;
+  font-weight: 600;
+}
+
+.feedback.success {
+  color: #2e7d32;
+}
+
+.feedback.error {
+  color: #c62828;
+}
+
+.shake {
+  animation: shake 0.4s ease;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-8px); }
+  40%, 80% { transform: translateX(8px); }
+}
+
+.hint {
+  font-size: 0.85rem;
+  opacity: 0.6;
+  margin-top: 4px;
+}
+
+/* Outfit list */
+.outfit-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.outfit-list li {
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.back-link {
+  display: inline-block;
+  margin-top: 20px;
+  color: var(--text-dark);
+  text-decoration: underline;
+  opacity: 0.8;
+}
+
+@media (max-width: 400px) {
+  .countdown-unit {
+    min-width: 58px;
+    padding: 10px 6px;
+  }
+  .countdown-unit .value {
+    font-size: 1.4rem;
+  }
+}

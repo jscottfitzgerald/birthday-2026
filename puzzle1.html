@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Puzzle 1 · The Birthday Games</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="hearts-bg" id="heartsBg"></div>
+
+  <div class="container">
+    <h1>⏳</h1>
+    <p class="subtitle">What could this be counting down to...?</p>
+
+    <div class="card">
+      <div class="countdown">
+        <div class="countdown-unit">
+          <div class="value" id="cd-days">00</div>
+          <div class="label">Days</div>
+        </div>
+        <div class="countdown-unit">
+          <div class="value" id="cd-hours">00</div>
+          <div class="label">Hours</div>
+        </div>
+        <div class="countdown-unit">
+          <div class="value" id="cd-minutes">00</div>
+          <div class="label">Mins</div>
+        </div>
+        <div class="countdown-unit">
+          <div class="value" id="cd-seconds">00</div>
+          <div class="label">Secs</div>
+        </div>
+      </div>
+
+      <form class="answer-form" id="answerForm">
+        <label for="answerInput">Enter the exact date &amp; time this is counting down to:</label>
+        <input
+          type="text"
+          id="answerInput"
+          placeholder="DD/MM/YYYY HH:MM"
+          autocomplete="off"
+          required
+        />
+        <div class="hint">Format: DD/MM/YYYY HH:MM (24-hour time)</div>
+        <button type="submit" class="btn">Unlock</button>
+        <div class="feedback" id="feedback"></div>
+        <a href="reward1.html" id="unlockLink" class="btn" style="display:none; background: linear-gradient(135deg, #ffd59e, #ff9ec7);">
+          Open the Outfit List 🧳
+        </a>
+      </form>
+    </div>
+
+    <a href="index.html" class="back-link">← Back to The Birthday Games</a>
+  </div>
+
+  <script src="js/progress.js"></script>
+  <script src="js/hearts.js"></script>
+  <script src="js/puzzle1.js"></script>
+</body>
+</html>
