@@ -296,6 +296,111 @@ h1 {
   gap: 10px;
 }
 
+/* Poem card with animated vines */
+.poem-card {
+  position: relative;
+  background: var(--card-bg);
+  border-radius: 24px;
+  padding: 36px 26px;
+  box-shadow: 0 10px 30px rgba(217, 76, 138, 0.25);
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+
+.poem-text {
+  position: relative;
+  z-index: 1;
+  font-style: italic;
+  font-size: 1.05rem;
+  line-height: 1.8;
+  white-space: pre-line;
+  color: var(--text-dark);
+}
+
+.vine {
+  position: absolute;
+  font-size: 1.6rem;
+  opacity: 0.8;
+  z-index: 0;
+  animation: sway 4s ease-in-out infinite;
+}
+
+.vine.top-left {
+  top: -6px;
+  left: -6px;
+  transform-origin: top left;
+}
+
+.vine.top-right {
+  top: -6px;
+  right: -6px;
+  transform: scaleX(-1);
+  transform-origin: top right;
+  animation-delay: 0.5s;
+}
+
+.vine.bottom-left {
+  bottom: -6px;
+  left: -6px;
+  transform: scaleY(-1);
+  transform-origin: bottom left;
+  animation-delay: 1s;
+}
+
+.vine.bottom-right {
+  bottom: -6px;
+  right: -6px;
+  transform: scale(-1, -1);
+  transform-origin: bottom right;
+  animation-delay: 1.5s;
+}
+
+@keyframes sway {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(8deg);
+  }
+}
+
+.vine.top-right {
+  animation-name: swayFlippedX;
+}
+.vine.bottom-left {
+  animation-name: swayFlippedY;
+}
+.vine.bottom-right {
+  animation-name: swayFlippedXY;
+}
+
+@keyframes swayFlippedX {
+  0%, 100% {
+    transform: scaleX(-1) rotate(0deg);
+  }
+  50% {
+    transform: scaleX(-1) rotate(8deg);
+  }
+}
+
+@keyframes swayFlippedY {
+  0%, 100% {
+    transform: scaleY(-1) rotate(0deg);
+  }
+  50% {
+    transform: scaleY(-1) rotate(8deg);
+  }
+}
+
+@keyframes swayFlippedXY {
+  0%, 100% {
+    transform: scale(-1, -1) rotate(0deg);
+  }
+  50% {
+    transform: scale(-1, -1) rotate(8deg);
+  }
+}
+
 .back-link {
   display: inline-block;
   margin-top: 20px;
