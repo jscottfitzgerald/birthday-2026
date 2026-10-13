@@ -20,6 +20,7 @@ const ROUNDS = [
   { key: "tenerife", label: "Location 6", photo: "images/Tenerife.jpg", lat: 28.2916, lng: -16.6291, radiusKm: 500 },
   { key: "thailand", label: "Location 7", photo: "images/Thailand.jpg", lat: 13.7563, lng: 100.5018, radiusKm: 500 },
   { key: "amsterdam", label: "Location 8 - The Missing One!", photo: null, lat: 52.3676, lng: 4.9041, radiusKm: 500 },
+  { key: "nextdestination", label: "Location 9 - One More Thing...", photo: null, joke: true },
 ];
 
 const PROGRESS_STORAGE_KEY = "puzzle2RoundIndex";
@@ -95,11 +96,18 @@ function renderRound() {
         <img src="${round.photo}" alt="${round.label}" />
       </div>
     `;
+  } else if (round.joke) {
+    photoArea.innerHTML = `
+      <div class="no-photo-card">
+        <div class="big-emoji">😏</div>
+        <div>Where do you think the next destination will be?</div>
+      </div>
+    `;
   } else {
     photoArea.innerHTML = `
       <div class="no-photo-card">
         <div class="big-emoji">🤔</div>
-        <div>No photo for this one! Where was the final stop on the trip?</div>
+        <div>One of our trips is missing a photo! Can you remember where else we've been?</div>
       </div>
     `;
   }
@@ -115,6 +123,29 @@ function handleGuess() {
   const guessBtn = document.getElementById("guessBtn");
   const nextBtn = document.getElementById("nextBtn");
   const mapContainer = document.getElementById("mapContainer");
+
+  if (round.joke) {
+    feedback.textContent = "Lol, as if I'd tell you! ❤";
+    feedback.className = "feedback success";
+    guessBtn.style.display = "none";
+
+    if (currentIndex === ROUNDS.length - 1) {
+      markSolved("puzzle2");
+      nextBtn.textContent = "Open your reward 🎁";
+      nextBtn.onclick = () => {
+        window.location.href = "reward2.html";
+      };
+    } else {
+      nextBtn.textContent = "Next location →";
+      nextBtn.onclick = () => {
+        currentIndex++;
+        saveRoundIndex(currentIndex);
+        renderRound();
+      };
+    }
+    nextBtn.style.display = "inline-block";
+    return;
+  }
 
   const dist = distanceKm(selectedLatLng.lat, selectedLatLng.lng, round.lat, round.lng);
 
