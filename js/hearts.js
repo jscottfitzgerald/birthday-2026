@@ -45,7 +45,7 @@ function spawnHearts(containerId = "heartsBg", count = 18) {
 
     const size = 1 + Math.random() * 1.4; // rem
     if (item.type === "image") {
-      el.style.width = size * 20 + "px";
+      el.style.width = size * 40 + "px";
       el.style.height = "auto";
     } else {
       el.style.fontSize = size + "rem";
