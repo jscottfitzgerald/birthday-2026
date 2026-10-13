@@ -9,7 +9,7 @@
    - After Puzzle 2 solved: + watermelons
    ============================================ */
 
-function spawnHearts(containerId = "heartsBg", count = 18) {
+function spawnHearts(containerId = "heartsBg", count = 27) {
   const container = document.getElementById(containerId);
   if (!container) return;
 
