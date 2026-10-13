@@ -319,85 +319,75 @@ h1 {
 .vine {
   position: absolute;
   font-size: 2.4rem;
+  line-height: 1;
+  display: inline-block;
   opacity: 1;
   z-index: 2;
-  animation: sway 4s ease-in-out infinite;
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
 }
 
+/* Each vine is centered exactly on its card corner using translate,
+   then flipped as needed, then given a gentle swaying rotation. */
 .vine.top-left {
-  top: -20px;
-  left: -20px;
-  transform-origin: top left;
+  top: 0;
+  left: 0;
+  animation: swayTopLeft 4s ease-in-out infinite;
 }
 
 .vine.top-right {
-  top: -20px;
-  right: -20px;
-  transform: scaleX(-1);
-  transform-origin: top right;
+  top: 0;
+  right: 0;
+  animation: swayTopRight 4s ease-in-out infinite;
   animation-delay: 0.5s;
 }
 
 .vine.bottom-left {
-  bottom: -20px;
-  left: -20px;
-  transform: scaleY(-1);
-  transform-origin: bottom left;
+  bottom: 0;
+  left: 0;
+  animation: swayBottomLeft 4s ease-in-out infinite;
   animation-delay: 1s;
 }
 
 .vine.bottom-right {
-  bottom: -20px;
-  right: -20px;
-  transform: scale(-1, -1);
-  transform-origin: bottom right;
+  bottom: 0;
+  right: 0;
+  animation: swayBottomRight 4s ease-in-out infinite;
   animation-delay: 1.5s;
 }
 
-@keyframes sway {
+@keyframes swayTopLeft {
   0%, 100% {
-    transform: rotate(0deg);
+    transform: translate(-50%, -50%) rotate(0deg);
   }
   50% {
-    transform: rotate(8deg);
+    transform: translate(-50%, -50%) rotate(8deg);
   }
 }
 
-.vine.top-right {
-  animation-name: swayFlippedX;
-}
-.vine.bottom-left {
-  animation-name: swayFlippedY;
-}
-.vine.bottom-right {
-  animation-name: swayFlippedXY;
-}
-
-@keyframes swayFlippedX {
+@keyframes swayTopRight {
   0%, 100% {
-    transform: scaleX(-1) rotate(0deg);
+    transform: translate(50%, -50%) scaleX(-1) rotate(0deg);
   }
   50% {
-    transform: scaleX(-1) rotate(8deg);
+    transform: translate(50%, -50%) scaleX(-1) rotate(8deg);
   }
 }
 
-@keyframes swayFlippedY {
+@keyframes swayBottomLeft {
   0%, 100% {
-    transform: scaleY(-1) rotate(0deg);
+    transform: translate(-50%, 50%) scaleY(-1) rotate(0deg);
   }
   50% {
-    transform: scaleY(-1) rotate(8deg);
+    transform: translate(-50%, 50%) scaleY(-1) rotate(8deg);
   }
 }
 
-@keyframes swayFlippedXY {
+@keyframes swayBottomRight {
   0%, 100% {
-    transform: scale(-1, -1) rotate(0deg);
+    transform: translate(50%, 50%) scale(-1, -1) rotate(0deg);
   }
   50% {
-    transform: scale(-1, -1) rotate(8deg);
+    transform: translate(50%, 50%) scale(-1, -1) rotate(8deg);
   }
 }
 
