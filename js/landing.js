@@ -23,9 +23,9 @@ const PUZZLES = [
   },
   {
     key: "puzzle2",
-    title: "Puzzle 2: Coming Soon",
-    icon: "🔒",
-    href: null, // not built yet
+    title: "Puzzle 2: Where in the World?",
+    icon: "🗺️",
+    href: "puzzle2.html",
   },
   {
     key: "puzzle3",

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Puzzle 2 · The Birthday Games</title>
+<link rel="stylesheet" href="css/style.css" />
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+  crossorigin=""
+/>
+</head>
+<body>
+  <div class="hearts-bg" id="heartsBg"></div>
+
+  <div class="container">
+    <h1>🗺️ Where in the World?</h1>
+    <p class="subtitle">Can you remember where each photo was taken?</p>
+
+    <div class="card" id="alreadySolved" style="display:none;">
+      <p>🎉 You've already solved this one! You can head to the next clue.</p>
+      <a href="reward2.html" class="btn">Open your reward 🎁</a>
+    </div>
+
+    <div class="card" id="gameArea">
+      <div class="progress-tracker" id="progressTracker"></div>
+
+      <div id="photoArea"></div>
+
+      <p class="map-instructions">Tap the map where you think this was taken:</p>
+      <div id="mapContainer"></div>
+
+      <div class="map-actions">
+        <button type="button" id="guessBtn" class="btn" disabled>Guess this spot</button>
+        <button type="button" id="nextBtn" class="btn" style="display:none;"></button>
+      </div>
+
+      <div class="feedback" id="feedback"></div>
+    </div>
+
+    <a href="index.html" class="back-link">← Back to The Birthday Games</a>
+  </div>
+
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""
+  ></script>
+  <script src="js/progress.js"></script>
+  <script src="js/hearts.js"></script>
+  <script src="js/puzzle2.js"></script>
+</body>
+</html>
