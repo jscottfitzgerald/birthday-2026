@@ -1,23 +1,59 @@
 /* ============================================
-   The Birthday Games - Floating hearts background
+   The Birthday Games - Floating background elements
    Shared across all pages for the romantic theme.
+
+   The mix of floating elements grows as puzzles get
+   solved:
+   - Always: floating hearts
+   - After Puzzle 1 solved: + the birthday photo
+   - After Puzzle 2 solved: + watermelons
    ============================================ */
 
 function spawnHearts(containerId = "heartsBg", count = 18) {
   const container = document.getElementById(containerId);
   if (!container) return;
 
-  const emojis = ["💖", "💕", "💗", "💓", "💘"];
+  const heartEmojis = ["💖", "💕", "💗", "💓", "💘"];
+
+  // Build the pool of floating items based on puzzle progress.
+  // Each entry is either { type: "emoji", value } or { type: "image", value }.
+  const pool = heartEmojis.map((value) => ({ type: "emoji", value }));
+
+  if (typeof isSolved === "function" && isSolved("puzzle1")) {
+    pool.push({ type: "image", value: "images/birthday-photo.png" });
+  }
+
+  if (typeof isSolved === "function" && isSolved("puzzle2")) {
+    pool.push({ type: "emoji", value: "🍉" });
+  }
 
   for (let i = 0; i < count; i++) {
-    const heart = document.createElement("span");
-    heart.className = "heart";
-    heart.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-    heart.style.left = Math.random() * 100 + "%";
-    heart.style.fontSize = (1 + Math.random() * 1.4) + "rem";
+    const item = pool[Math.floor(Math.random() * pool.length)];
+    const el = document.createElement(
+      item.type === "image" ? "img" : "span"
+    );
+    el.className = "heart";
+
+    if (item.type === "image") {
+      el.src = item.value;
+      el.alt = "";
+    } else {
+      el.textContent = item.value;
+    }
+
+    el.style.left = Math.random() * 100 + "%";
+
+    const size = 1 + Math.random() * 1.4; // rem
+    if (item.type === "image") {
+      el.style.width = size * 20 + "px";
+      el.style.height = "auto";
+    } else {
+      el.style.fontSize = size + "rem";
+    }
+
     const duration = 8 + Math.random() * 10;
-    heart.style.animationDuration = duration + "s";
-    heart.style.animationDelay = (Math.random() * duration) + "s";
-    container.appendChild(heart);
+    el.style.animationDuration = duration + "s";
+    el.style.animationDelay = Math.random() * duration + "s";
+    container.appendChild(el);
   }
 }
