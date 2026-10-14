@@ -588,12 +588,21 @@ h1 {
   50% { transform: rotate(2deg); }
 }
 
-/* Mid-layer palm trees for the beach zone */
+/* Mid-layer palm trees for the beach zone - anchored at the top of
+   the sand band (52%, matching .zone-beach's gradient split), not
+   the bottom of the whole game area, so they stand on the sand
+   rather than appearing to stand in the water. */
 .palm-tree {
   position: absolute;
-  bottom: 0;
+  top: 52%;
+  transform: translateY(-100%);
   transform-origin: bottom center;
-  animation: treeSway 4.5s ease-in-out infinite;
+  animation: palmTreeSway 4.5s ease-in-out infinite;
+}
+
+@keyframes palmTreeSway {
+  0%, 100% { transform: translateY(-100%) rotate(-2deg); }
+  50% { transform: translateY(-100%) rotate(2deg); }
 }
 
 .palm-tree .palm-trunk {

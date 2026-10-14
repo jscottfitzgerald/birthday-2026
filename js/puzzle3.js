@@ -372,10 +372,13 @@ const ZONE_DECORATIONS = {
   ],
   zoneBeach: [
     ["☀️", 8, "top", 10], ["🐦", 35, "top", 14], ["🐦", 68, "top", 10],
-    ["🌊", 10, "ground", 15], ["🌊", 32, "ground", 10], ["🌊", 54, "ground", 20],
-    ["🌊", 76, "ground", 12], ["🌊", 95, "ground", 18],
-    ["🐚", 5, "ground", 55], ["🦀", 22, "ground", 70], ["🐚", 40, "ground", 48],
-    ["🏖️", 58, "ground", 80], ["🐚", 74, "ground", 55], ["🦀", 90, "ground", 70],
+    // Beach umbrellas sitting up on the sand
+    ["🏖️", 30, "ground", 35], ["🏖️", 65, "ground", 30],
+    // Only waves, fish, crabs, and shells stay down in the water (value 55-100)
+    ["🌊", 10, "ground", 60], ["🌊", 32, "ground", 55], ["🌊", 54, "ground", 65],
+    ["🌊", 76, "ground", 58], ["🌊", 95, "ground", 62],
+    ["🐠", 20, "ground", 80], ["🐠", 60, "ground", 85], ["🐟", 85, "ground", 78],
+    ["🦀", 40, "ground", 90], ["🐚", 15, "ground", 95], ["🐚", 70, "ground", 92],
   ],
 };
 
