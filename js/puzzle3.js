@@ -1,93 +1,106 @@
 /* ============================================
-   Puzzle 3 - Navigate & Answer
-   She swipes to move a character around an open
-   screen. Swiping moves her continuously in that
-   direction until she reaches a stop point, where
-   a question dialog slides up. All 3 stops must be
-   answered correctly (any order) to finish.
+   Puzzle 3 - Navigate & Answer (side-scroller)
+   She swipes left/right to walk a character through
+   a wide scrolling world: forest -> cobbled path ->
+   beach. Reaching a stop point opens a question
+   dialog. All 3 stops must be answered correctly
+   (any order) to finish.
    ============================================ */
 
 /* ---- EDIT ME ----
-   Placeholder stop points and questions - update the
-   position (percentages of the game area), question
-   text, and accepted answer(s) as needed.
+   Each zone is WORLD_ZONE_WIDTH px wide, placed side
+   by side in order. Stop x positions are in px from
+   the very start of the whole world (0 = far left
+   edge of the forest).
    Answers are matched case-insensitively, trimmed.
 */
+const WORLD_ZONE_WIDTH = 1000; // px, width of each themed zone
+const WORLD_WIDTH = WORLD_ZONE_WIDTH * 3;
+
 const STOPS = [
   {
     key: "stop1",
     icon: "❓",
-    xPercent: 45,
-    yPercent: 16, // inside the forest zone (top third)
+    worldX: 650, // inside the forest zone
     question: "Placeholder question 1 (forest)?",
     answers: ["placeholder answer 1"],
   },
   {
     key: "stop2",
     icon: "❓",
-    xPercent: 55,
-    yPercent: 50, // inside the cobbled path zone (middle third)
+    worldX: WORLD_ZONE_WIDTH + 500, // inside the cobbled path zone
     question: "Placeholder question 2 (path)?",
     answers: ["placeholder answer 2"],
   },
   {
     key: "stop3",
     icon: "❓",
-    xPercent: 45,
-    yPercent: 84, // inside the beach zone (bottom third)
+    worldX: WORLD_ZONE_WIDTH * 2 + 550, // inside the beach zone
     question: "Placeholder question 3 (beach)?",
     answers: ["placeholder answer 3"],
   },
 ];
 
-const CHARACTER_SIZE = 56;
-const STOP_SIZE = 44;
-const STOP_TRIGGER_RADIUS = STOP_SIZE / 2 + CHARACTER_SIZE / 2 - 10;
-const MOVE_SPEED = 220; // px per second
+const CHARACTER_SIZE = 60;
+const STOP_SIZE = 48;
+const STOP_TRIGGER_RADIUS = STOP_SIZE / 2 + CHARACTER_SIZE / 2 - 8;
+const MOVE_SPEED = 260; // px per second
 const SWIPE_MIN_DISTANCE = 20; // px
+const PARALLAX_FACTOR = 0.35; // background scrolls slower than foreground
 
 let answeredStops = new Set();
-let charX = 50; // px, top-left of character box
-let charY = 50;
-let currentDirection = null; // { dx, dy } normalized
+let worldX = 60; // character's position within the whole world, px
+let currentDirection = 0; // -1 left, 1 right, 0 stopped
 let moveTimer = null;
-let activeStop = null; // the stop currently being answered
+let activeStop = null;
 let touchStartX = 0;
-let touchStartY = 0;
 
 function getGameArea() {
   return document.getElementById("navGameArea");
 }
 
-function stopPixelPosition(stop) {
-  const area = getGameArea();
-  const rect = area.getBoundingClientRect();
-  return {
-    x: (stop.xPercent / 100) * rect.width,
-    y: (stop.yPercent / 100) * rect.height,
-  };
+function getViewportWidth() {
+  return getGameArea().getBoundingClientRect().width;
+}
+
+/**
+ * The camera keeps the character roughly centered, but clamps
+ * so we never scroll past the world's edges.
+ */
+function getCameraOffset() {
+  const viewportWidth = getViewportWidth();
+  const half = viewportWidth / 2;
+  let offset = worldX - half;
+  offset = Math.max(0, Math.min(offset, WORLD_WIDTH - viewportWidth));
+  return offset;
+}
+
+function renderWorld() {
+  const camera = getCameraOffset();
+  document.getElementById("navWorld").style.transform =
+    `translateX(${-camera}px)`;
+  document.getElementById("navParallax").style.transform =
+    `translateX(${-camera * PARALLAX_FACTOR}px)`;
 }
 
 function renderStops() {
-  const area = getGameArea();
-  area.querySelectorAll(".nav-stop").forEach((el) => el.remove());
+  const world = document.getElementById("navWorld");
+  world.querySelectorAll(".nav-stop").forEach((el) => el.remove());
 
   STOPS.forEach((stop) => {
-    const pos = stopPixelPosition(stop);
     const el = document.createElement("div");
     el.className = "nav-stop" + (answeredStops.has(stop.key) ? " answered" : "");
-    el.style.left = pos.x + "px";
-    el.style.top = pos.y + "px";
+    el.style.left = stop.worldX + "px";
     el.textContent = answeredStops.has(stop.key) ? "💗" : stop.icon;
     el.dataset.key = stop.key;
-    area.appendChild(el);
+    world.appendChild(el);
   });
 }
 
 function renderCharacter() {
   const character = document.getElementById("navCharacter");
-  character.style.left = charX + "px";
-  character.style.top = charY + "px";
+  const camera = getCameraOffset();
+  character.style.left = worldX - camera + "px";
 }
 
 function updateProgressText() {
@@ -96,15 +109,11 @@ function updateProgressText() {
 }
 
 function checkCollisions() {
-  if (activeStop) return; // already answering one
-
-  const charCenterX = charX + CHARACTER_SIZE / 2;
-  const charCenterY = charY + CHARACTER_SIZE / 2;
+  if (activeStop) return;
 
   for (const stop of STOPS) {
     if (answeredStops.has(stop.key)) continue;
-    const pos = stopPixelPosition(stop);
-    const dist = Math.hypot(charCenterX - pos.x, charCenterY - pos.y);
+    const dist = Math.abs(worldX - stop.worldX);
     if (dist <= STOP_TRIGGER_RADIUS) {
       openQuestion(stop);
       break;
@@ -168,31 +177,38 @@ function finishPuzzle() {
   document.getElementById("navComplete").style.display = "block";
 }
 
-function clampToGameArea() {
-  const area = getGameArea();
-  const rect = area.getBoundingClientRect();
-  charX = Math.max(0, Math.min(charX, rect.width - CHARACTER_SIZE));
-  charY = Math.max(0, Math.min(charY, rect.height - CHARACTER_SIZE));
+function clampWorldX() {
+  worldX = Math.max(CHARACTER_SIZE / 2, Math.min(worldX, WORLD_WIDTH - CHARACTER_SIZE / 2));
+}
+
+function updateCharacterFacing() {
+  const character = document.getElementById("navCharacter");
+  if (currentDirection < 0) {
+    character.classList.add("facing-left");
+  } else if (currentDirection > 0) {
+    character.classList.remove("facing-left");
+  }
 }
 
 function moveStep() {
   if (!currentDirection || activeStop) return;
   const delta = (MOVE_SPEED / 1000) * 16; // approx per animation frame (16ms)
-  charX += currentDirection.dx * delta;
-  charY += currentDirection.dy * delta;
-  clampToGameArea();
+  worldX += currentDirection * delta;
+  clampWorldX();
+  renderWorld();
   renderCharacter();
   checkCollisions();
 }
 
-function startMoving(dx, dy) {
-  currentDirection = { dx, dy };
+function startMoving(direction) {
+  currentDirection = direction;
+  updateCharacterFacing();
   if (moveTimer) clearInterval(moveTimer);
   moveTimer = setInterval(moveStep, 16);
 }
 
 function stopMoving() {
-  currentDirection = null;
+  currentDirection = 0;
   if (moveTimer) {
     clearInterval(moveTimer);
     moveTimer = null;
@@ -201,49 +217,34 @@ function stopMoving() {
 
 function handleTouchStart(e) {
   if (activeStop) return;
-  const touch = e.touches[0];
-  touchStartX = touch.clientX;
-  touchStartY = touch.clientY;
+  touchStartX = e.touches[0].clientX;
 }
 
 function handleTouchEnd(e) {
   if (activeStop) return;
-  const touch = e.changedTouches[0];
-  const dx = touch.clientX - touchStartX;
-  const dy = touch.clientY - touchStartY;
-  const distance = Math.hypot(dx, dy);
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  if (Math.abs(dx) < SWIPE_MIN_DISTANCE) return;
 
-  if (distance < SWIPE_MIN_DISTANCE) return;
-
-  const normalized = { dx: dx / distance, dy: dy / distance };
-  startMoving(normalized.dx, normalized.dy);
-
-  // Keep moving for a fixed duration per swipe, then stop.
+  startMoving(dx > 0 ? 1 : -1);
   setTimeout(stopMoving, 700);
 }
 
 // Mouse support for desktop testing (drag to simulate swipe)
 let mouseDownX = null;
-let mouseDownY = null;
 
 function handleMouseDown(e) {
   if (activeStop) return;
   mouseDownX = e.clientX;
-  mouseDownY = e.clientY;
 }
 
 function handleMouseUp(e) {
   if (activeStop || mouseDownX === null) return;
   const dx = e.clientX - mouseDownX;
-  const dy = e.clientY - mouseDownY;
-  const distance = Math.hypot(dx, dy);
   mouseDownX = null;
-  mouseDownY = null;
 
-  if (distance < SWIPE_MIN_DISTANCE) return;
+  if (Math.abs(dx) < SWIPE_MIN_DISTANCE) return;
 
-  const normalized = { dx: dx / distance, dy: dy / distance };
-  startMoving(normalized.dx, normalized.dy);
+  startMoving(dx > 0 ? 1 : -1);
   setTimeout(stopMoving, 700);
 }
 
@@ -269,6 +270,46 @@ function loadAnsweredStops() {
   }
 }
 
+/* Scattered decorations per zone: [emoji, xPercentOfZone, topPercent] */
+const ZONE_DECORATIONS = {
+  zoneForest: [
+    ["🌲", 3, 38], ["🌲", 12, 25], ["🌳", 22, 42], ["🍄", 30, 68],
+    ["🦋", 38, 30], ["🌿", 46, 65], ["🌲", 55, 20], ["🌳", 63, 45],
+    ["🍄", 70, 70], ["🦋", 78, 35], ["🌲", 85, 28], ["🌿", 92, 60],
+  ],
+  zonePath: [
+    ["🪨", 5, 55], ["🌼", 14, 30], ["🪵", 25, 60], ["🌼", 35, 25],
+    ["🪨", 45, 50], ["🦗", 55, 65], ["🌼", 65, 28], ["🪨", 75, 55],
+    ["🪵", 85, 60], ["🌼", 93, 30],
+  ],
+  zoneBeach: [
+    ["☀️", 5, 8], ["🐚", 15, 72], ["🌊", 25, 58], ["🏖️", 35, 75],
+    ["🐚", 45, 70], ["🌊", 55, 60], ["🦀", 65, 75], ["🐚", 75, 68],
+    ["🌊", 85, 58], ["🏖️", 93, 73],
+  ],
+};
+
+function buildZones() {
+  const zoneIds = ["zoneForest", "zonePath", "zoneBeach"];
+  zoneIds.forEach((id, index) => {
+    const zone = document.getElementById(id);
+    zone.style.left = index * WORLD_ZONE_WIDTH + "px";
+    zone.style.width = WORLD_ZONE_WIDTH + "px";
+
+    const decorations = ZONE_DECORATIONS[id] || [];
+    decorations.forEach(([emoji, leftPct, topPct]) => {
+      const span = document.createElement("span");
+      span.className = "nav-decoration";
+      span.style.left = leftPct + "%";
+      span.style.top = topPct + "%";
+      span.textContent = emoji;
+      zone.appendChild(span);
+    });
+  });
+
+  document.getElementById("navWorld").style.width = WORLD_WIDTH + "px";
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   spawnHearts();
 
@@ -279,8 +320,10 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   answeredStops = loadAnsweredStops();
+  buildZones();
   updateProgressText();
   renderStops();
+  renderWorld();
   renderCharacter();
 
   const area = getGameArea();
@@ -288,6 +331,11 @@ document.addEventListener("DOMContentLoaded", () => {
   area.addEventListener("touchend", handleTouchEnd, { passive: true });
   area.addEventListener("mousedown", handleMouseDown);
   area.addEventListener("mouseup", handleMouseUp);
+
+  window.addEventListener("resize", () => {
+    renderWorld();
+    renderCharacter();
+  });
 
   document
     .getElementById("answerForm")

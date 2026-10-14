@@ -498,70 +498,102 @@ h1 {
   box-shadow: inset 0 0 0 2px rgba(255, 111, 165, 0.25);
   margin-bottom: 16px;
   touch-action: none;
+  background: #bdeaff;
 }
 
-/* Three themed zones: forest (top), cobbled path (middle), beach (bottom) */
+/* Slow-moving background layer for parallax depth (clouds/hills) */
+.nav-parallax {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.parallax-item {
+  position: absolute;
+  font-size: 3rem;
+  opacity: 0.5;
+  user-select: none;
+}
+
+/* The scrolling world strip containing all 3 zones side by side */
+.nav-world {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  z-index: 1;
+  will-change: transform;
+}
+
 .nav-zone {
   position: absolute;
-  left: 0;
-  width: 100%;
-  height: 33.34%;
+  top: 0;
+  height: 100%;
   overflow: hidden;
 }
 
 .nav-zone.zone-forest {
-  top: 0;
-  background: linear-gradient(180deg, #bfe6c2 0%, #8fcf96 100%);
+  background: linear-gradient(180deg, #bdeaff 0%, #bdeaff 45%, #8fcf96 45%, #5fae68 100%);
 }
 
 .nav-zone.zone-path {
-  top: 33.33%;
-  background: repeating-linear-gradient(
-    45deg,
-    #d9c7a8,
-    #d9c7a8 14px,
-    #cdb998 14px,
-    #cdb998 28px
-  );
+  background: linear-gradient(180deg, #bdeaff 0%, #bdeaff 40%, #d9c7a8 40%, #cdb998 100%);
 }
 
 .nav-zone.zone-beach {
-  top: 66.66%;
-  background: linear-gradient(180deg, #fff3c4 0%, #ffe49a 45%, #a8d8f0 100%);
+  background: linear-gradient(
+    180deg,
+    #aee3ff 0%,
+    #aee3ff 55%,
+    #fff3c4 55%,
+    #ffe49a 80%,
+    #4fb3d9 80%,
+    #3a93b8 100%
+  );
 }
 
 .nav-decoration {
   position: absolute;
-  font-size: 1.8rem;
-  opacity: 0.85;
+  font-size: 2rem;
+  opacity: 0.9;
   user-select: none;
   pointer-events: none;
 }
 
 .nav-character {
   position: absolute;
-  width: 56px;
-  height: 56px;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
   object-fit: cover;
   box-shadow: 0 4px 10px rgba(217, 76, 138, 0.4);
-  transition: left 0.15s linear, top 0.15s linear;
   z-index: 3;
+  bottom: 18%;
+  transform: translateX(-50%);
+}
+
+.nav-character.facing-left {
+  transform: translateX(-50%) scaleX(-1);
 }
 
 .nav-stop {
   position: absolute;
-  width: 44px;
-  height: 44px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.3rem;
-  background: rgba(255, 255, 255, 0.85);
+  font-size: 1.4rem;
+  background: rgba(255, 255, 255, 0.9);
   box-shadow: 0 3px 8px rgba(217, 76, 138, 0.3);
-  transform: translate(-50%, -50%);
-  z-index: 1;
+  bottom: 18%;
+  transform: translateX(-50%);
+  z-index: 2;
 }
 
 .nav-stop.answered {

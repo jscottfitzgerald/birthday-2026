@@ -20,29 +20,21 @@
 
     <div id="navGameWrapper">
       <div class="nav-progress" id="navProgress">0 of 3 answered</div>
-      <p class="nav-hint">Swipe anywhere on the board to move</p>
+      <p class="nav-hint">Swipe left or right anywhere on the scene to walk</p>
 
       <div class="nav-game-area" id="navGameArea">
-        <div class="nav-zone zone-forest">
-          <span class="nav-decoration" style="left: 8%; top: 20%;">🌲</span>
-          <span class="nav-decoration" style="left: 60%; top: 10%;">🌲</span>
-          <span class="nav-decoration" style="left: 85%; top: 55%;">🌳</span>
-          <span class="nav-decoration" style="left: 35%; top: 60%;">🍄</span>
-          <span class="nav-decoration" style="left: 50%; top: 25%;">🦋</span>
-          <span class="nav-decoration" style="left: 15%; top: 70%;">🌿</span>
+        <div class="nav-parallax" id="navParallax">
+          <span class="parallax-item" style="left: 100px; top: 8%;">☁️</span>
+          <span class="parallax-item" style="left: 500px; top: 15%;">☁️</span>
+          <span class="parallax-item" style="left: 950px; top: 10%;">☁️</span>
+          <span class="parallax-item" style="left: 1400px; top: 18%;">☁️</span>
+          <span class="parallax-item" style="left: 1850px; top: 6%;">☁️</span>
+          <span class="parallax-item" style="left: 2300px; top: 14%;">☁️</span>
         </div>
-        <div class="nav-zone zone-path">
-          <span class="nav-decoration" style="left: 10%; top: 30%;">🪨</span>
-          <span class="nav-decoration" style="left: 70%; top: 15%;">🌼</span>
-          <span class="nav-decoration" style="left: 85%; top: 60%;">🌼</span>
-          <span class="nav-decoration" style="left: 30%; top: 65%;">🪵</span>
-        </div>
-        <div class="nav-zone zone-beach">
-          <span class="nav-decoration" style="left: 10%; top: 15%;">☀️</span>
-          <span class="nav-decoration" style="left: 75%; top: 10%;">🐚</span>
-          <span class="nav-decoration" style="left: 50%; top: 40%;">🌊</span>
-          <span class="nav-decoration" style="left: 20%; top: 60%;">🏖️</span>
-          <span class="nav-decoration" style="left: 85%; top: 55%;">🐚</span>
+        <div class="nav-world" id="navWorld">
+          <div class="nav-zone zone-forest" id="zoneForest"></div>
+          <div class="nav-zone zone-path" id="zonePath"></div>
+          <div class="nav-zone zone-beach" id="zoneBeach"></div>
         </div>
         <img
           id="navCharacter"
