@@ -17,25 +17,25 @@ const STOPS = [
   {
     key: "stop1",
     icon: "❓",
-    xPercent: 20,
-    yPercent: 25,
-    question: "Placeholder question 1?",
+    xPercent: 45,
+    yPercent: 16, // inside the forest zone (top third)
+    question: "Placeholder question 1 (forest)?",
     answers: ["placeholder answer 1"],
   },
   {
     key: "stop2",
     icon: "❓",
-    xPercent: 75,
-    yPercent: 40,
-    question: "Placeholder question 2?",
+    xPercent: 55,
+    yPercent: 50, // inside the cobbled path zone (middle third)
+    question: "Placeholder question 2 (path)?",
     answers: ["placeholder answer 2"],
   },
   {
     key: "stop3",
     icon: "❓",
     xPercent: 45,
-    yPercent: 75,
-    question: "Placeholder question 3?",
+    yPercent: 84, // inside the beach zone (bottom third)
+    question: "Placeholder question 3 (beach)?",
     answers: ["placeholder answer 3"],
   },
 ];

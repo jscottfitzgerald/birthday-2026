@@ -11,7 +11,7 @@
 
   <div class="container">
     <h1>🧭 Navigate & Answer</h1>
-    <p class="subtitle">Swipe to move. Find all 3 stops and answer correctly!</p>
+    <p class="subtitle">Swipe through the forest, down the cobbled path, and onto the beach — find all 3 stops and answer correctly!</p>
 
     <div class="card" id="alreadySolved" style="display:none;">
       <p>🎉 You've already solved this one! You can head to the next clue.</p>
@@ -23,6 +23,27 @@
       <p class="nav-hint">Swipe anywhere on the board to move</p>
 
       <div class="nav-game-area" id="navGameArea">
+        <div class="nav-zone zone-forest">
+          <span class="nav-decoration" style="left: 8%; top: 20%;">🌲</span>
+          <span class="nav-decoration" style="left: 60%; top: 10%;">🌲</span>
+          <span class="nav-decoration" style="left: 85%; top: 55%;">🌳</span>
+          <span class="nav-decoration" style="left: 35%; top: 60%;">🍄</span>
+          <span class="nav-decoration" style="left: 50%; top: 25%;">🦋</span>
+          <span class="nav-decoration" style="left: 15%; top: 70%;">🌿</span>
+        </div>
+        <div class="nav-zone zone-path">
+          <span class="nav-decoration" style="left: 10%; top: 30%;">🪨</span>
+          <span class="nav-decoration" style="left: 70%; top: 15%;">🌼</span>
+          <span class="nav-decoration" style="left: 85%; top: 60%;">🌼</span>
+          <span class="nav-decoration" style="left: 30%; top: 65%;">🪵</span>
+        </div>
+        <div class="nav-zone zone-beach">
+          <span class="nav-decoration" style="left: 10%; top: 15%;">☀️</span>
+          <span class="nav-decoration" style="left: 75%; top: 10%;">🐚</span>
+          <span class="nav-decoration" style="left: 50%; top: 40%;">🌊</span>
+          <span class="nav-decoration" style="left: 20%; top: 60%;">🏖️</span>
+          <span class="nav-decoration" style="left: 85%; top: 55%;">🐚</span>
+        </div>
         <img
           id="navCharacter"
           class="nav-character"
