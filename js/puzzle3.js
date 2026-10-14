@@ -22,8 +22,9 @@ const STOPS = [
     key: "stop1",
     icon: "❓",
     worldX: 650, // inside the forest zone
-    question: "Placeholder question 1 (forest)?",
-    answers: ["placeholder answer 1"],
+    question:
+      "In the IEEE 754 floating-point standard, what is the exact standard term for the special value generated when the exponent bits are all set to 1 and the fraction/mantissa bits are non-zero?",
+    answers: ["nan", "not a number"],
   },
   {
     key: "stop2",
