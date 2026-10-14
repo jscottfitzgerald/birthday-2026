@@ -57,8 +57,7 @@ const STOP_TRIGGER_RADIUS = STOP_SIZE / 2 + CHARACTER_SIZE / 2 - 8;
 const MOVE_SPEED = 260; // px per second
 const SWIPE_MIN_DISTANCE = 20; // px
 const PARALLAX_FACTOR = 0.25; // clouds scroll slowest (furthest away)
-const FAR_FACTOR = 0.45; // hills scroll a bit faster than clouds
-const MID_FACTOR = 0.7; // trees/landmarks scroll faster still, world is 1x
+const FAR_FACTOR = 0.45; // hills scroll a bit faster than clouds, world (ground + trees) is 1x
 
 let answeredStops = new Set();
 let worldX = 60; // character's position within the whole world, px
@@ -95,8 +94,6 @@ function renderWorld() {
     `translateX(${-camera * PARALLAX_FACTOR}px)`;
   document.getElementById("navFar").style.transform =
     `translateX(${-camera * FAR_FACTOR}px)`;
-  document.getElementById("navMid").style.transform =
-    `translateX(${-camera * MID_FACTOR}px)`;
 }
 
 function renderStops() {
@@ -459,10 +456,12 @@ function buildFarHills() {
   });
 }
 
-/* Mid-layer trees/landmarks per zone, positioned by approximate
-   world-x (adjusted for the MID_FACTOR scroll, faster than hills). */
+/* Trees/landmarks per zone. These stand directly on the ground, so
+   they're appended into navWorld itself (same 1x scroll as the
+   ground) rather than a separate parallax layer - otherwise they'd
+   visually drift apart from the ground as the world scrolls. */
 function buildMidLayer() {
-  const mid = document.getElementById("navMid");
+  const mid = document.getElementById("navWorld");
 
   // Pine trees scattered through the forest zone
   const pinePositions = [40, 160, 280, 420, 560, 700, 820];

@@ -501,28 +501,17 @@ h1 {
   background: #bdeaff;
 }
 
-/* Parallax depth layers: sky/clouds (slowest) -> far hills -> mid
-   trees/landmarks -> world (ground + characters, fastest/1x) */
+/* Parallax depth layers: sky/clouds (slowest) -> far hills -> world
+   (ground, trees/landmarks, and characters, all fastest/1x together
+   so trees stay visually attached to the ground they stand on) */
 .nav-parallax,
-.nav-far,
-.nav-mid {
+.nav-far {
   position: absolute;
   top: 0;
   left: 0;
   height: 100%;
   pointer-events: none;
   will-change: transform;
-}
-
-.nav-parallax {
-  z-index: 0;
-}
-
-.nav-far {
-  z-index: 0;
-}
-
-.nav-mid {
   z-index: 0;
 }
 
