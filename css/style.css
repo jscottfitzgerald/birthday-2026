@@ -487,6 +487,529 @@ h1 {
   min-width: 120px;
 }
 
+/* Puzzle 3 - Navigation game */
+.nav-game-area {
+  position: relative;
+  width: 100%;
+  height: 65vh;
+  min-height: 420px;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: inset 0 0 0 2px rgba(255, 111, 165, 0.25);
+  margin-bottom: 16px;
+  touch-action: none;
+  background: #bdeaff;
+}
+
+/* Parallax depth layers: sky/clouds (slowest) -> far hills -> world
+   (ground, trees/landmarks, and characters, all fastest/1x together
+   so trees stay visually attached to the ground they stand on) */
+.nav-parallax,
+.nav-far {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  pointer-events: none;
+  will-change: transform;
+  z-index: 0;
+}
+
+.parallax-item {
+  position: absolute;
+  font-size: 3rem;
+  opacity: 0.5;
+  user-select: none;
+  animation: cloudFloat 8s ease-in-out infinite;
+}
+
+@keyframes cloudFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+/* Far hill silhouettes */
+.hill {
+  position: absolute;
+  bottom: 0;
+  border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+}
+
+/* Mid-layer trees (CSS-built pine trees, no images needed) */
+.pine-tree {
+  position: absolute;
+  bottom: 0;
+  width: 0;
+  height: 0;
+  transform-origin: bottom center;
+  animation: treeSway 5s ease-in-out infinite;
+}
+
+.pine-tree .trunk {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 8px;
+  height: 18px;
+  background: #6b4a2f;
+  border-radius: 2px;
+}
+
+.pine-tree .leaves {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 28px solid transparent;
+  border-right: 28px solid transparent;
+  border-bottom: 46px solid #3f8f4e;
+}
+
+.pine-tree .leaves.tier2 {
+  bottom: 24px;
+  border-left-width: 22px;
+  border-right-width: 22px;
+  border-bottom-width: 36px;
+  border-bottom-color: #4ea35d;
+}
+
+.pine-tree .leaves.tier3 {
+  bottom: 44px;
+  border-left-width: 16px;
+  border-right-width: 16px;
+  border-bottom-width: 28px;
+  border-bottom-color: #5fb86f;
+}
+
+@keyframes treeSway {
+  0%, 100% { transform: rotate(-2deg); }
+  50% { transform: rotate(2deg); }
+}
+
+/* Mid-layer palm trees for the beach zone - anchored at the top of
+   the sand band (52%, matching .zone-beach's gradient split), not
+   the bottom of the whole game area, so they stand on the sand
+   rather than appearing to stand in the water. */
+.palm-tree {
+  position: absolute;
+  top: 52%;
+  transform: translateY(-100%);
+  transform-origin: bottom center;
+  animation: palmTreeSway 4.5s ease-in-out infinite;
+}
+
+@keyframes palmTreeSway {
+  0%, 100% { transform: translateY(-100%) rotate(-2deg); }
+  50% { transform: translateY(-100%) rotate(2deg); }
+}
+
+.palm-tree .palm-trunk {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 10px;
+  height: 70px;
+  background: #a87c4f;
+  border-radius: 40% 10% 40% 10%;
+  transform: translateX(-50%) rotate(-4deg);
+}
+
+.palm-tree .frond {
+  position: absolute;
+  bottom: 62px;
+  left: 50%;
+  width: 46px;
+  height: 16px;
+  background: #3f9d4a;
+  border-radius: 50% 50% 50% 0;
+  transform-origin: left center;
+}
+
+/* Little shops and houses lining the cobbled path zone */
+.mini-building {
+  position: absolute;
+  bottom: 0;
+  width: 90px;
+  height: 100px;
+}
+
+.building-wall {
+  position: absolute;
+  bottom: 0;
+  width: 90px;
+  height: 70px;
+  background: var(--wall-color, #e8c39e);
+  border-radius: 2px 2px 0 0;
+  box-shadow: inset -6px 0 0 rgba(0, 0, 0, 0.08);
+}
+
+.building-roof {
+  position: absolute;
+  bottom: 68px;
+  left: -6px;
+  width: 0;
+  height: 0;
+  border-left: 51px solid transparent;
+  border-right: 51px solid transparent;
+  border-bottom: 30px solid var(--roof-color, #c0504d);
+}
+
+.building-door {
+  position: absolute;
+  bottom: 0;
+  left: 36px;
+  width: 18px;
+  height: 36px;
+  background: #6b4a2f;
+  border-radius: 4px 4px 0 0;
+}
+
+.building-window {
+  position: absolute;
+  bottom: 42px;
+  width: 16px;
+  height: 16px;
+  background: #cdeaff;
+  border: 2px solid #fff;
+  border-radius: 2px;
+}
+
+.building-window:nth-of-type(2) {
+  left: 10px;
+}
+
+.building-window:nth-of-type(3) {
+  left: 64px;
+}
+
+.building-sign {
+  position: absolute;
+  bottom: 74px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.4rem;
+}
+
+.lamp-post {
+  position: absolute;
+  bottom: 0;
+  width: 6px;
+  height: 64px;
+  background: #5a5a5a;
+}
+
+.lamp-post::before {
+  content: "";
+  position: absolute;
+  top: -14px;
+  left: -7px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #ffe9a8;
+  box-shadow: 0 0 14px 6px rgba(255, 233, 168, 0.8);
+  animation: twinkle 2.5s ease-in-out infinite;
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+
+/* Foreground fireflies drifting in the forest */
+.firefly {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #fff3a0;
+  box-shadow: 0 0 8px 3px rgba(255, 243, 160, 0.9);
+  animation: fireflyFloat 4s ease-in-out infinite;
+}
+
+@keyframes fireflyFloat {
+  0%, 100% { transform: translate(0, 0); opacity: 0.5; }
+  50% { transform: translate(6px, -14px); opacity: 1; }
+}
+
+/* The scrolling world strip containing all 3 zones side by side */
+.nav-world {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  z-index: 1;
+  will-change: transform;
+}
+
+.nav-zone {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+.nav-zone.zone-forest {
+  background: linear-gradient(180deg, #bdeaff 0%, #bdeaff 42%, #8fcf96 42%, #5fae68 100%);
+}
+
+.nav-zone.zone-forest::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 58%;
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.12) 2px, transparent 2px);
+  background-size: 26px 26px;
+}
+
+.nav-zone.zone-path {
+  background: linear-gradient(180deg, #bdeaff 0%, #bdeaff 42%, #d9c7a8 42%, #cdb998 100%);
+}
+
+.nav-zone.zone-path::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 58%;
+  background-image: repeating-linear-gradient(
+      45deg,
+      rgba(120, 95, 60, 0.18) 0,
+      rgba(120, 95, 60, 0.18) 3px,
+      transparent 3px,
+      transparent 30px
+    ),
+    repeating-linear-gradient(
+      -45deg,
+      rgba(120, 95, 60, 0.18) 0,
+      rgba(120, 95, 60, 0.18) 3px,
+      transparent 3px,
+      transparent 30px
+    );
+}
+
+.nav-zone.zone-beach {
+  background: linear-gradient(
+    180deg,
+    #aee3ff 0%,
+    #aee3ff 52%,
+    #fff3c4 52%,
+    #ffe49a 76%,
+    #4fb3d9 76%,
+    #3a93b8 100%
+  );
+}
+
+.nav-zone.zone-beach::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 24%;
+  background-image: repeating-linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.35) 0,
+    rgba(255, 255, 255, 0.35) 40px,
+    transparent 40px,
+    transparent 140px
+  );
+  animation: waveShift 3s linear infinite;
+}
+
+@keyframes waveShift {
+  0% { background-position-x: 0; }
+  100% { background-position-x: 140px; }
+}
+
+.nav-decoration {
+  position: absolute;
+  font-size: 2rem;
+  opacity: 0.9;
+  user-select: none;
+  pointer-events: none;
+}
+
+.nav-decoration.big-tree {
+  font-size: 3.6rem;
+  transform-origin: bottom center;
+  animation: bigTreeSway 5s ease-in-out infinite;
+}
+
+@keyframes bigTreeSway {
+  0%, 100% { transform: translateY(-85%) rotate(-2deg); }
+  50% { transform: translateY(-85%) rotate(2deg); }
+}
+
+.nav-decoration.floating-item {
+  animation: butterflyFloat 3s ease-in-out infinite;
+}
+
+@keyframes butterflyFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-14px); }
+}
+
+.nav-character {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 4px 10px rgba(217, 76, 138, 0.4);
+  z-index: 3;
+  bottom: 18%;
+  transform: translateX(-50%);
+}
+
+.nav-character.facing-left {
+  transform: translateX(-50%) scaleX(-1);
+}
+
+.nav-character.walking {
+  animation: walkBob 0.35s ease-in-out infinite;
+}
+
+.nav-character.facing-left.walking {
+  animation: walkBobFlipped 0.35s ease-in-out infinite;
+}
+
+@keyframes walkBob {
+  0%, 100% { transform: translateX(-50%) translateY(0) rotate(-4deg); }
+  50% { transform: translateX(-50%) translateY(-8px) rotate(4deg); }
+}
+
+@keyframes walkBobFlipped {
+  0%, 100% { transform: translateX(-50%) scaleX(-1) translateY(0) rotate(-4deg); }
+  50% { transform: translateX(-50%) scaleX(-1) translateY(-8px) rotate(4deg); }
+}
+
+.nav-stop {
+  position: absolute;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 3px 8px rgba(217, 76, 138, 0.3);
+  bottom: 18%;
+  transform: translateX(-50%);
+  z-index: 2;
+}
+
+.nav-stop.answered {
+  background: linear-gradient(135deg, var(--pink-deep), var(--pink-darker));
+}
+
+.nav-hint {
+  font-size: 0.85rem;
+  opacity: 0.75;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.nav-progress {
+  font-size: 0.9rem;
+  opacity: 0.8;
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+/* Sliding question dialog */
+.question-dialog {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--card-bg);
+  border-radius: 24px 24px 0 0;
+  padding: 24px 22px 30px;
+  box-shadow: 0 -8px 24px rgba(217, 76, 138, 0.3);
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
+  z-index: 10;
+}
+
+.question-dialog.open {
+  transform: translateY(0);
+}
+
+.question-dialog p {
+  font-weight: 600;
+  margin-bottom: 14px;
+}
+
+/* Hangman game (reward 3) */
+.hangman-word {
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  margin: 20px 0;
+  color: var(--pink-darker);
+  word-spacing: 0.5em;
+}
+
+.hangman-figure {
+  font-size: 3rem;
+  margin-bottom: 16px;
+  min-height: 60px;
+}
+
+.hangman-keyboard {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+  max-width: 420px;
+  margin: 0 auto 16px;
+}
+
+.hangman-key {
+  padding: 10px 0;
+  border-radius: 10px;
+  border: none;
+  background: linear-gradient(135deg, var(--pink-mid), var(--pink-deep));
+  color: #fff;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.hangman-key:disabled {
+  background: #ddd;
+  color: #999;
+  cursor: not-allowed;
+}
+
+.hangman-key.correct-key {
+  background: linear-gradient(135deg, #7fd896, #4fae6a);
+}
+
+.hangman-key.wrong-key {
+  background: #c9c9c9;
+  color: #888;
+}
+
+.hangman-status {
+  font-size: 0.95rem;
+  opacity: 0.8;
+  margin-bottom: 10px;
+}
+
+.hangman-win {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--pink-darker);
+  margin-top: 16px;
+}
+
 @media (max-width: 400px) {
   .countdown-unit {
     min-width: 58px;

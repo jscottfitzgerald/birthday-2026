@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Puzzle 3 · The Birthday Games</title>
+<link rel="stylesheet" href="css/style.css?v=3" />
+</head>
+<body>
+  <div class="container">
+    <h1>🧭 Navigate & Answer</h1>
+    <p class="subtitle">Swipe through the forest, down the cobbled path, and onto the beach — find all 3 stops and answer correctly!</p>
+
+    <div class="card" id="alreadySolved" style="display:none;">
+      <p>🎉 You've already solved this one! You can head to the next clue.</p>
+      <a href="reward3.html" class="btn">Open your reward 🎁</a>
+    </div>
+
+    <div id="navGameWrapper">
+      <div class="nav-progress" id="navProgress">0 of 3 answered</div>
+      <p class="nav-hint">Swipe left or right anywhere on the scene to walk</p>
+
+      <div class="nav-game-area" id="navGameArea">
+        <div class="nav-parallax" id="navParallax"></div>
+        <div class="nav-far" id="navFar"></div>
+        <div class="nav-world" id="navWorld">
+          <div class="nav-zone zone-forest" id="zoneForest"></div>
+          <div class="nav-zone zone-path" id="zonePath"></div>
+          <div class="nav-zone zone-beach" id="zoneBeach"></div>
+        </div>
+        <img
+          id="navCharacter"
+          class="nav-character"
+          src="images/birthday-photo.png"
+          alt="Your character"
+        />
+      </div>
+    </div>
+
+    <div class="card" id="navComplete" style="display:none;">
+      <p>🎉 You found and answered everything!</p>
+      <a href="reward3.html" class="btn">Open your reward 🎁</a>
+    </div>
+
+    <a href="index.html" class="back-link">← Back to The Birthday Games</a>
+  </div>
+
+  <div class="question-dialog" id="questionDialog">
+    <p id="questionText"></p>
+    <form class="answer-form" id="answerForm">
+      <input
+        type="text"
+        id="answerInput"
+        placeholder="Type your answer..."
+        autocomplete="off"
+        required
+      />
+      <button type="submit" class="btn">Submit</button>
+      <div class="feedback" id="answerFeedback"></div>
+    </form>
+  </div>
+
+  <script src="js/progress.js?v=3"></script>
+  <script src="js/hearts.js?v=3"></script>
+  <script src="js/puzzle3.js?v=3"></script>
+</body>
+</html>
