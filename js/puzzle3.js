@@ -38,8 +38,16 @@ const STOPS = [
     key: "stop3",
     icon: "❓",
     worldX: WORLD_ZONE_WIDTH * 2 + 550, // inside the beach zone
-    question: "Placeholder question 3 (beach)?",
-    answers: ["placeholder answer 3"],
+    question:
+      "Across all of our joint round-trip flights so far, roughly how many total air miles have we flown together? (Round to the nearest thousand)",
+    numericRange: [32000, 36000],
+    funFact:
+      "Fun fact: That's more than 1.3 times around the entire circumference of the Earth side-by-side!",
+    bonus: {
+      question:
+        "Bonus Question: After we return from our next holiday, what will our new grand total air mileage be? (Answer in miles, rounded to the nearest thousand)",
+      numericRange: [45000, 47000],
+    },
   },
 ];
 
@@ -129,12 +137,21 @@ function checkCollisions() {
   }
 }
 
+// Tracks whether we're currently showing a stop's main question
+// or its bonus follow-up question (only some stops have a bonus).
+let showingBonus = false;
+
 function openQuestion(stop) {
   activeStop = stop;
+  showingBonus = false;
   stopMoving();
+  renderQuestionDialog();
+}
 
+function renderQuestionDialog() {
   const dialog = document.getElementById("questionDialog");
-  document.getElementById("questionText").textContent = stop.question;
+  const current = showingBonus ? activeStop.bonus : activeStop;
+  document.getElementById("questionText").textContent = current.question;
   document.getElementById("answerInput").value = "";
   document.getElementById("answerFeedback").textContent = "";
   document.getElementById("answerFeedback").className = "feedback";
@@ -145,6 +162,28 @@ function openQuestion(stop) {
 function closeQuestion() {
   document.getElementById("questionDialog").classList.remove("open");
   activeStop = null;
+  showingBonus = false;
+}
+
+/**
+ * Checks a given answer against a question definition that may use
+ * either exact text answers (`answers: [...]`) or a numeric range
+ * (`numericRange: [min, max]`).
+ */
+function isAnswerCorrect(questionDef, given) {
+  if (questionDef.numericRange) {
+    const num = parseFloat(given.replace(/[,\s]/g, ""));
+    if (Number.isNaN(num)) return false;
+    const [min, max] = questionDef.numericRange;
+    return num >= min && num <= max;
+  }
+  if (questionDef.answers) {
+    const normalized = given.trim().toLowerCase();
+    return questionDef.answers.some(
+      (a) => a.trim().toLowerCase() === normalized
+    );
+  }
+  return false;
 }
 
 function submitAnswer(event) {
@@ -153,30 +192,46 @@ function submitAnswer(event) {
 
   const input = document.getElementById("answerInput");
   const feedback = document.getElementById("answerFeedback");
-  const given = input.value.trim().toLowerCase();
+  const given = input.value.trim();
+  const current = showingBonus ? activeStop.bonus : activeStop;
 
-  const correct = activeStop.answers.some(
-    (a) => a.trim().toLowerCase() === given
-  );
+  const correct = isAnswerCorrect(current, given);
 
-  if (correct) {
-    feedback.textContent = "🎉 Correct!";
-    feedback.className = "feedback success";
-    answeredStops.add(activeStop.key);
-    saveAnsweredStops();
-    renderStops();
-    updateProgressText();
-
-    setTimeout(() => {
-      closeQuestion();
-      if (answeredStops.size === STOPS.length) {
-        finishPuzzle();
-      }
-    }, 900);
-  } else {
+  if (!correct) {
     feedback.textContent = "Not quite, try again! 💭";
     feedback.className = "feedback error";
+    return;
   }
+
+  feedback.textContent = "🎉 Correct!";
+  feedback.className = "feedback success";
+
+  // If this was the main question and it has both a fun fact and a
+  // bonus follow-up, show the fun fact then move on to the bonus.
+  if (!showingBonus && activeStop.funFact && activeStop.bonus) {
+    setTimeout(() => {
+      feedback.textContent = activeStop.funFact;
+      feedback.className = "feedback success";
+      setTimeout(() => {
+        showingBonus = true;
+        renderQuestionDialog();
+      }, 2200);
+    }, 600);
+    return;
+  }
+
+  // Otherwise this stop is fully answered.
+  answeredStops.add(activeStop.key);
+  saveAnsweredStops();
+  renderStops();
+  updateProgressText();
+
+  setTimeout(() => {
+    closeQuestion();
+    if (answeredStops.size === STOPS.length) {
+      finishPuzzle();
+    }
+  }, 900);
 }
 
 function finishPuzzle() {
