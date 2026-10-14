@@ -501,15 +501,29 @@ h1 {
   background: #bdeaff;
 }
 
-/* Slow-moving background layer for parallax depth (clouds/hills) */
-.nav-parallax {
+/* Parallax depth layers: sky/clouds (slowest) -> far hills -> mid
+   trees/landmarks -> world (ground + characters, fastest/1x) */
+.nav-parallax,
+.nav-far,
+.nav-mid {
   position: absolute;
   top: 0;
   left: 0;
   height: 100%;
-  z-index: 0;
   pointer-events: none;
   will-change: transform;
+}
+
+.nav-parallax {
+  z-index: 0;
+}
+
+.nav-far {
+  z-index: 0;
+}
+
+.nav-mid {
+  z-index: 0;
 }
 
 .parallax-item {
@@ -517,6 +531,164 @@ h1 {
   font-size: 3rem;
   opacity: 0.5;
   user-select: none;
+  animation: cloudFloat 8s ease-in-out infinite;
+}
+
+@keyframes cloudFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+/* Far hill silhouettes */
+.hill {
+  position: absolute;
+  bottom: 0;
+  border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+}
+
+/* Mid-layer trees (CSS-built pine trees, no images needed) */
+.pine-tree {
+  position: absolute;
+  bottom: 0;
+  width: 0;
+  height: 0;
+  transform-origin: bottom center;
+  animation: treeSway 5s ease-in-out infinite;
+}
+
+.pine-tree .trunk {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 8px;
+  height: 18px;
+  background: #6b4a2f;
+  border-radius: 2px;
+}
+
+.pine-tree .leaves {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 28px solid transparent;
+  border-right: 28px solid transparent;
+  border-bottom: 46px solid #3f8f4e;
+}
+
+.pine-tree .leaves.tier2 {
+  bottom: 24px;
+  border-left-width: 22px;
+  border-right-width: 22px;
+  border-bottom-width: 36px;
+  border-bottom-color: #4ea35d;
+}
+
+.pine-tree .leaves.tier3 {
+  bottom: 44px;
+  border-left-width: 16px;
+  border-right-width: 16px;
+  border-bottom-width: 28px;
+  border-bottom-color: #5fb86f;
+}
+
+@keyframes treeSway {
+  0%, 100% { transform: rotate(-2deg); }
+  50% { transform: rotate(2deg); }
+}
+
+/* Mid-layer palm trees for the beach zone */
+.palm-tree {
+  position: absolute;
+  bottom: 0;
+  transform-origin: bottom center;
+  animation: treeSway 4.5s ease-in-out infinite;
+}
+
+.palm-tree .palm-trunk {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 10px;
+  height: 70px;
+  background: #a87c4f;
+  border-radius: 40% 10% 40% 10%;
+  transform: translateX(-50%) rotate(-4deg);
+}
+
+.palm-tree .frond {
+  position: absolute;
+  bottom: 62px;
+  left: 50%;
+  width: 46px;
+  height: 16px;
+  background: #3f9d4a;
+  border-radius: 50% 50% 50% 0;
+  transform-origin: left center;
+}
+
+/* Mid-layer fence posts for the cobbled path zone */
+.fence-post {
+  position: absolute;
+  bottom: 0;
+  width: 10px;
+  height: 46px;
+  background: #b58a5c;
+  border-radius: 3px 3px 0 0;
+}
+
+.fence-post::after {
+  content: "";
+  position: absolute;
+  top: 10px;
+  left: -14px;
+  width: 38px;
+  height: 6px;
+  background: #b58a5c;
+}
+
+.lamp-post {
+  position: absolute;
+  bottom: 0;
+  width: 6px;
+  height: 64px;
+  background: #5a5a5a;
+}
+
+.lamp-post::before {
+  content: "";
+  position: absolute;
+  top: -14px;
+  left: -7px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #ffe9a8;
+  box-shadow: 0 0 14px 6px rgba(255, 233, 168, 0.8);
+  animation: twinkle 2.5s ease-in-out infinite;
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+
+/* Foreground fireflies drifting in the forest */
+.firefly {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #fff3a0;
+  box-shadow: 0 0 8px 3px rgba(255, 243, 160, 0.9);
+  animation: fireflyFloat 4s ease-in-out infinite;
+}
+
+@keyframes fireflyFloat {
+  0%, 100% { transform: translate(0, 0); opacity: 0.5; }
+  50% { transform: translate(6px, -14px); opacity: 1; }
 }
 
 /* The scrolling world strip containing all 3 zones side by side */
@@ -537,23 +709,79 @@ h1 {
 }
 
 .nav-zone.zone-forest {
-  background: linear-gradient(180deg, #bdeaff 0%, #bdeaff 45%, #8fcf96 45%, #5fae68 100%);
+  background: linear-gradient(180deg, #bdeaff 0%, #bdeaff 42%, #8fcf96 42%, #5fae68 100%);
+}
+
+.nav-zone.zone-forest::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 58%;
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.12) 2px, transparent 2px);
+  background-size: 26px 26px;
 }
 
 .nav-zone.zone-path {
-  background: linear-gradient(180deg, #bdeaff 0%, #bdeaff 40%, #d9c7a8 40%, #cdb998 100%);
+  background: linear-gradient(180deg, #bdeaff 0%, #bdeaff 38%, #d9c7a8 38%, #cdb998 100%);
+}
+
+.nav-zone.zone-path::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 62%;
+  background-image: repeating-linear-gradient(
+      45deg,
+      rgba(120, 95, 60, 0.18) 0,
+      rgba(120, 95, 60, 0.18) 3px,
+      transparent 3px,
+      transparent 30px
+    ),
+    repeating-linear-gradient(
+      -45deg,
+      rgba(120, 95, 60, 0.18) 0,
+      rgba(120, 95, 60, 0.18) 3px,
+      transparent 3px,
+      transparent 30px
+    );
 }
 
 .nav-zone.zone-beach {
   background: linear-gradient(
     180deg,
     #aee3ff 0%,
-    #aee3ff 55%,
-    #fff3c4 55%,
-    #ffe49a 80%,
-    #4fb3d9 80%,
+    #aee3ff 52%,
+    #fff3c4 52%,
+    #ffe49a 76%,
+    #4fb3d9 76%,
     #3a93b8 100%
   );
+}
+
+.nav-zone.zone-beach::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 24%;
+  background-image: repeating-linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.35) 0,
+    rgba(255, 255, 255, 0.35) 40px,
+    transparent 40px,
+    transparent 140px
+  );
+  animation: waveShift 3s linear infinite;
+}
+
+@keyframes waveShift {
+  0% { background-position-x: 0; }
+  100% { background-position-x: 140px; }
 }
 
 .nav-decoration {

@@ -46,7 +46,9 @@ const STOP_SIZE = 48;
 const STOP_TRIGGER_RADIUS = STOP_SIZE / 2 + CHARACTER_SIZE / 2 - 8;
 const MOVE_SPEED = 260; // px per second
 const SWIPE_MIN_DISTANCE = 20; // px
-const PARALLAX_FACTOR = 0.35; // background scrolls slower than foreground
+const PARALLAX_FACTOR = 0.25; // clouds scroll slowest (furthest away)
+const FAR_FACTOR = 0.45; // hills scroll a bit faster than clouds
+const MID_FACTOR = 0.7; // trees/landmarks scroll faster still, world is 1x
 
 let answeredStops = new Set();
 let worldX = 60; // character's position within the whole world, px
@@ -81,6 +83,10 @@ function renderWorld() {
     `translateX(${-camera}px)`;
   document.getElementById("navParallax").style.transform =
     `translateX(${-camera * PARALLAX_FACTOR}px)`;
+  document.getElementById("navFar").style.transform =
+    `translateX(${-camera * FAR_FACTOR}px)`;
+  document.getElementById("navMid").style.transform =
+    `translateX(${-camera * MID_FACTOR}px)`;
 }
 
 function renderStops() {
@@ -308,6 +314,105 @@ function buildZones() {
   });
 
   document.getElementById("navWorld").style.width = WORLD_WIDTH + "px";
+  buildFarHills();
+  buildMidLayer();
+}
+
+/* Far hill silhouettes, color-matched per zone, positioned by
+   approximate world-x (adjusted for the slower FAR_FACTOR scroll). */
+function buildFarHills() {
+  const far = document.getElementById("navFar");
+  const hills = [
+    { x: 50, w: 260, h: 90, color: "rgba(90, 170, 110, 0.55)" },
+    { x: 320, w: 220, h: 70, color: "rgba(90, 170, 110, 0.4)" },
+    { x: 900, w: 260, h: 80, color: "rgba(170, 150, 110, 0.5)" },
+    { x: 1200, w: 220, h: 65, color: "rgba(170, 150, 110, 0.35)" },
+    { x: 1900, w: 280, h: 60, color: "rgba(80, 160, 190, 0.4)" },
+    { x: 2250, w: 240, h: 75, color: "rgba(240, 220, 160, 0.45)" },
+  ];
+
+  hills.forEach((hill) => {
+    const el = document.createElement("div");
+    el.className = "hill";
+    el.style.left = hill.x + "px";
+    el.style.width = hill.w + "px";
+    el.style.height = hill.h + "px";
+    el.style.background = hill.color;
+    far.appendChild(el);
+  });
+}
+
+/* Mid-layer trees/landmarks per zone, positioned by approximate
+   world-x (adjusted for the MID_FACTOR scroll, faster than hills). */
+function buildMidLayer() {
+  const mid = document.getElementById("navMid");
+
+  // Pine trees scattered through the forest zone
+  const pinePositions = [40, 160, 280, 420, 560, 700, 820];
+  pinePositions.forEach((x, i) => {
+    const tree = document.createElement("div");
+    tree.className = "pine-tree";
+    tree.style.left = x + "px";
+    tree.style.animationDelay = i * 0.3 + "s";
+    tree.innerHTML = `
+      <div class="leaves"></div>
+      <div class="leaves tier2"></div>
+      <div class="leaves tier3"></div>
+      <div class="trunk"></div>
+    `;
+    mid.appendChild(tree);
+  });
+
+  // Fireflies drifting among the forest trees
+  const fireflyPositions = [120, 300, 480, 650, 780];
+  fireflyPositions.forEach((x, i) => {
+    const fly = document.createElement("div");
+    fly.className = "firefly";
+    fly.style.left = x + "px";
+    fly.style.top = 40 + (i % 3) * 15 + "%";
+    fly.style.animationDelay = i * 0.6 + "s";
+    mid.appendChild(fly);
+  });
+
+  // Fence posts and a lamp post along the cobbled path zone
+  const fencePositions = [
+    WORLD_ZONE_WIDTH + 60, WORLD_ZONE_WIDTH + 160, WORLD_ZONE_WIDTH + 260,
+    WORLD_ZONE_WIDTH + 620, WORLD_ZONE_WIDTH + 720, WORLD_ZONE_WIDTH + 820,
+  ];
+  fencePositions.forEach((x) => {
+    const post = document.createElement("div");
+    post.className = "fence-post";
+    post.style.left = x + "px";
+    mid.appendChild(post);
+  });
+
+  const lampPositions = [WORLD_ZONE_WIDTH + 420];
+  lampPositions.forEach((x) => {
+    const lamp = document.createElement("div");
+    lamp.className = "lamp-post";
+    lamp.style.left = x + "px";
+    mid.appendChild(lamp);
+  });
+
+  // Palm trees scattered through the beach zone
+  const palmPositions = [
+    WORLD_ZONE_WIDTH * 2 + 80, WORLD_ZONE_WIDTH * 2 + 280,
+    WORLD_ZONE_WIDTH * 2 + 480, WORLD_ZONE_WIDTH * 2 + 750,
+  ];
+  palmPositions.forEach((x, i) => {
+    const palm = document.createElement("div");
+    palm.className = "palm-tree";
+    palm.style.left = x + "px";
+    palm.style.animationDelay = i * 0.4 + "s";
+    palm.innerHTML = `
+      <div class="palm-trunk"></div>
+      <div class="frond" style="transform: rotate(-30deg);"></div>
+      <div class="frond" style="transform: rotate(0deg);"></div>
+      <div class="frond" style="transform: rotate(30deg);"></div>
+      <div class="frond" style="transform: rotate(60deg) scaleX(-1);"></div>
+    `;
+    mid.appendChild(palm);
+  });
 }
 
 document.addEventListener("DOMContentLoaded", () => {
