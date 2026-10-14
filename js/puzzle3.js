@@ -416,7 +416,9 @@ function buildMidLayer() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  spawnHearts();
+  // Note: spawnHearts() is intentionally NOT called on this page.
+  // The navigation game has its own themed sky/scenery, and the
+  // site-wide floating hearts overlay would visually clash with it.
 
   if (isSolved("puzzle3")) {
     document.getElementById("alreadySolved").style.display = "block";
