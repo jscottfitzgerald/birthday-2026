@@ -332,22 +332,41 @@ function loadAnsweredStops() {
   }
 }
 
-/* Scattered decorations per zone: [emoji, xPercentOfZone, topPercent] */
+/* Scattered decorations per zone: [emoji, xPercentOfZone, topPercent]
+   Ground-level items (mushrooms, rocks, shells, etc.) use topPercent
+   values near the bottom of the ground band so they visually sit ON
+   the ground. Only genuinely airborne things (butterflies, birds)
+   use higher topPercent values near the sky/ground boundary. Forest
+   ground starts ~42%, path ~38%, beach ~52% (matching the CSS zone
+   gradients), so ground items stay safely below those lines. */
 const ZONE_DECORATIONS = {
   zoneForest: [
-    ["🌲", 3, 38], ["🌲", 12, 25], ["🌳", 22, 42], ["🍄", 30, 68],
-    ["🦋", 38, 30], ["🌿", 46, 65], ["🌲", 55, 20], ["🌳", 63, 45],
-    ["🍄", 70, 70], ["🦋", 78, 35], ["🌲", 85, 28], ["🌿", 92, 60],
+    // Airborne (above/at the treeline)
+    ["🦋", 10, 34], ["🦋", 33, 28], ["🦋", 58, 36], ["🦋", 82, 30],
+    // Ground-level clutter, sitting low in the grass band
+    ["🍄", 6, 80], ["🍄", 18, 86], ["🍄", 27, 76], ["🍄", 41, 88],
+    ["🌿", 14, 90], ["🌿", 24, 70], ["🌿", 36, 92], ["🌿", 48, 78],
+    ["🌿", 60, 84], ["🌿", 68, 72], ["🌿", 76, 90], ["🌿", 88, 80],
+    ["🍂", 20, 94], ["🍂", 52, 86], ["🍂", 72, 94], ["🍂", 90, 88],
+    ["🪨", 44, 92], ["🪨", 80, 86],
   ],
   zonePath: [
-    ["🪨", 5, 55], ["🌼", 14, 30], ["🪵", 25, 60], ["🌼", 35, 25],
-    ["🪨", 45, 50], ["🦗", 55, 65], ["🌼", 65, 28], ["🪨", 75, 55],
-    ["🪵", 85, 60], ["🌼", 93, 30],
+    ["🪨", 4, 70], ["🪨", 16, 80], ["🪨", 44, 74], ["🪨", 62, 82],
+    ["🪨", 78, 70], ["🪨", 90, 78],
+    ["🌼", 10, 55], ["🌼", 22, 62], ["🌼", 34, 50], ["🌼", 50, 58],
+    ["🌼", 58, 48], ["🌼", 70, 56], ["🌼", 86, 52], ["🌼", 95, 60],
+    ["🪵", 28, 86], ["🪵", 68, 88],
+    ["🦗", 38, 66], ["🦋", 55, 32], ["🦋", 80, 28],
+    ["🌾", 6, 90], ["🌾", 46, 92], ["🌾", 84, 90],
   ],
   zoneBeach: [
-    ["☀️", 5, 8], ["🐚", 15, 72], ["🌊", 25, 58], ["🏖️", 35, 75],
-    ["🐚", 45, 70], ["🌊", 55, 60], ["🦀", 65, 75], ["🐚", 75, 68],
-    ["🌊", 85, 58], ["🏖️", 93, 73],
+    ["☀️", 8, 10], ["🐦", 30, 16], ["🐦", 65, 12],
+    ["🐚", 6, 86], ["🐚", 22, 90], ["🐚", 48, 84], ["🐚", 66, 92],
+    ["🐚", 84, 88],
+    ["🌊", 15, 70], ["🌊", 38, 68], ["🌊", 58, 72], ["🌊", 78, 66],
+    ["🏖️", 28, 94], ["🏖️", 72, 92],
+    ["🦀", 42, 90], ["🦀", 88, 86],
+    ["⭐", 12, 92], ["⭐", 56, 88], ["⭐", 94, 92],
   ],
 };
 
