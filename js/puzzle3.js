@@ -339,34 +339,43 @@ function loadAnsweredStops() {
    use higher topPercent values near the sky/ground boundary. Forest
    ground starts ~42%, path ~38%, beach ~52% (matching the CSS zone
    gradients), so ground items stay safely below those lines. */
+/* Each item is [emoji, xPercentOfZone, anchor, value, isFloating].
+   anchor "top": value is a top-percent (used for sky items like the
+   sun, birds, and floating butterflies - independent of the ground).
+   anchor "ground": value is how far DOWN into the ground band the
+   item sits, as a percent of the ground band's own height, where 0
+   means right at the grass/sand line (tree bases, etc.) and higher
+   numbers sit further down into the band. This guarantees ground
+   items always visually sit on the correct ground, regardless of
+   each zone's sky/ground split. Items are spaced >= 15% apart on x
+   to avoid stacking on top of each other. */
+const GROUND_LINE_TOP_PCT = { zoneForest: 42, zonePath: 38, zoneBeach: 52 };
+
 const ZONE_DECORATIONS = {
   zoneForest: [
-    // Airborne (above/at the treeline)
-    ["🦋", 10, 34], ["🦋", 33, 28], ["🦋", 58, 36], ["🦋", 82, 30],
-    // Ground-level clutter, sitting low in the grass band
-    ["🍄", 6, 80], ["🍄", 18, 86], ["🍄", 27, 76], ["🍄", 41, 88],
-    ["🌿", 14, 90], ["🌿", 24, 70], ["🌿", 36, 92], ["🌿", 48, 78],
-    ["🌿", 60, 84], ["🌿", 68, 72], ["🌿", 76, 90], ["🌿", 88, 80],
-    ["🍂", 20, 94], ["🍂", 52, 86], ["🍂", 72, 94], ["🍂", 90, 88],
-    ["🪨", 44, 92], ["🪨", 80, 86],
+    // Big trees, base sitting exactly on the ground line
+    ["🌲", 4, "ground", 0], ["🌳", 22, "ground", 0], ["🌲", 48, "ground", 0],
+    ["🌳", 68, "ground", 0], ["🌲", 92, "ground", 0],
+    // Airborne butterflies, drifting above the treeline, gently floating
+    ["🦋", 14, "top", 24, true], ["🦋", 40, "top", 18, true], ["🦋", 78, "top", 26, true],
+    // Ground clutter, spaced out so nothing overlaps each other or the trees
+    ["🍄", 12, "ground", 35], ["🪨", 35, "ground", 55], ["🍂", 58, "ground", 30],
+    ["🌿", 2, "ground", 70], ["🍂", 28, "ground", 80], ["🪨", 78, "ground", 40],
+    ["🌿", 88, "ground", 65],
   ],
   zonePath: [
-    ["🪨", 4, 70], ["🪨", 16, 80], ["🪨", 44, 74], ["🪨", 62, 82],
-    ["🪨", 78, 70], ["🪨", 90, 78],
-    ["🌼", 10, 55], ["🌼", 22, 62], ["🌼", 34, 50], ["🌼", 50, 58],
-    ["🌼", 58, 48], ["🌼", 70, 56], ["🌼", 86, 52], ["🌼", 95, 60],
-    ["🪵", 28, 86], ["🪵", 68, 88],
-    ["🦗", 38, 66], ["🦋", 55, 32], ["🦋", 80, 28],
-    ["🌾", 6, 90], ["🌾", 46, 92], ["🌾", 84, 90],
+    ["🪨", 3, "ground", 20], ["🌼", 20, "ground", 45], ["🪵", 38, "ground", 25],
+    ["🌼", 56, "ground", 50], ["🪨", 72, "ground", 20], ["🦗", 90, "ground", 40],
+    ["🪨", 12, "ground", 75], ["🌾", 30, "ground", 85], ["🪵", 48, "ground", 70],
+    ["🌾", 66, "ground", 90], ["🪨", 84, "ground", 75],
+    ["🦋", 24, "top", 28, true], ["🦋", 62, "top", 22, true],
   ],
   zoneBeach: [
-    ["☀️", 8, 10], ["🐦", 30, 16], ["🐦", 65, 12],
-    ["🐚", 6, 86], ["🐚", 22, 90], ["🐚", 48, 84], ["🐚", 66, 92],
-    ["🐚", 84, 88],
-    ["🌊", 15, 70], ["🌊", 38, 68], ["🌊", 58, 72], ["🌊", 78, 66],
-    ["🏖️", 28, 94], ["🏖️", 72, 92],
-    ["🦀", 42, 90], ["🦀", 88, 86],
-    ["⭐", 12, 92], ["⭐", 56, 88], ["⭐", 94, 92],
+    ["☀️", 8, "top", 10], ["🐦", 35, "top", 14], ["🐦", 68, "top", 10],
+    ["🌊", 10, "ground", 15], ["🌊", 32, "ground", 10], ["🌊", 54, "ground", 20],
+    ["🌊", 76, "ground", 12], ["🌊", 95, "ground", 18],
+    ["🐚", 5, "ground", 55], ["🦀", 22, "ground", 70], ["🐚", 40, "ground", 48],
+    ["🏖️", 58, "ground", 80], ["🐚", 74, "ground", 55], ["🦀", 90, "ground", 70],
   ],
 };
 
@@ -377,13 +386,34 @@ function buildZones() {
     zone.style.left = index * WORLD_ZONE_WIDTH + "px";
     zone.style.width = WORLD_ZONE_WIDTH + "px";
 
+    const groundLineTop = GROUND_LINE_TOP_PCT[id];
     const decorations = ZONE_DECORATIONS[id] || [];
-    decorations.forEach(([emoji, leftPct, topPct]) => {
+    decorations.forEach(([emoji, leftPct, anchor, value, isFloating]) => {
       const span = document.createElement("span");
       span.className = "nav-decoration";
+
+      if (anchor === "ground") {
+        // value is how far down into the ground band (0-100% of the
+        // band's own height), so convert to an absolute top-percent.
+        const groundBandHeight = 100 - groundLineTop;
+        const topPct = groundLineTop + (value / 100) * groundBandHeight;
+        span.style.top = topPct + "%";
+        if (value === 0) {
+          // Tree bases sit exactly on the ground line - the
+          // .big-tree CSS class handles anchoring from the bottom
+          // of the emoji so the trunk visually touches the line.
+          span.style.top = groundLineTop + "%";
+          span.classList.add("big-tree");
+        }
+      } else {
+        span.style.top = value + "%";
+      }
+
       span.style.left = leftPct + "%";
-      span.style.top = topPct + "%";
       span.textContent = emoji;
+      if (isFloating) {
+        span.classList.add("floating-item");
+      }
       zone.appendChild(span);
     });
   });

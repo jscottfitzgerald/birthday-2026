@@ -781,6 +781,26 @@ h1 {
   pointer-events: none;
 }
 
+.nav-decoration.big-tree {
+  font-size: 3.6rem;
+  transform-origin: bottom center;
+  animation: bigTreeSway 5s ease-in-out infinite;
+}
+
+@keyframes bigTreeSway {
+  0%, 100% { transform: translateY(-85%) rotate(-2deg); }
+  50% { transform: translateY(-85%) rotate(2deg); }
+}
+
+.nav-decoration.floating-item {
+  animation: butterflyFloat 3s ease-in-out infinite;
+}
+
+@keyframes butterflyFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-14px); }
+}
+
 .nav-character {
   position: absolute;
   width: 60px;
