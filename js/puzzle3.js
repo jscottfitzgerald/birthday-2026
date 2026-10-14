@@ -209,12 +209,14 @@ function moveStep() {
 function startMoving(direction) {
   currentDirection = direction;
   updateCharacterFacing();
+  document.getElementById("navCharacter").classList.add("walking");
   if (moveTimer) clearInterval(moveTimer);
   moveTimer = setInterval(moveStep, 16);
 }
 
 function stopMoving() {
   currentDirection = 0;
+  document.getElementById("navCharacter").classList.remove("walking");
   if (moveTimer) {
     clearInterval(moveTimer);
     moveTimer = null;
@@ -314,8 +316,66 @@ function buildZones() {
   });
 
   document.getElementById("navWorld").style.width = WORLD_WIDTH + "px";
+  buildSky();
   buildFarHills();
   buildMidLayer();
+}
+
+/* Dense, varied sky: lots of clouds plus zone-appropriate extras
+   (sun, birds, seagulls) scattered across the whole world width. */
+function buildSky() {
+  const sky = document.getElementById("navParallax");
+  const skyItems = [];
+
+  // Clouds every ~180px across the whole world, with varied size/height
+  for (let x = 40; x < WORLD_WIDTH; x += 180) {
+    const topPct = 5 + ((x / 90) % 5) * 5; // varies 5-25%
+    const size = 2 + ((x / 180) % 3) * 0.6; // varies 2-3.8rem
+    skyItems.push({ emoji: "☁️", x, topPct, size, duration: 7 + (x % 5) });
+  }
+
+  // A sun low in the forest zone, higher sun over the beach
+  skyItems.push({ emoji: "☀️", x: 150, topPct: 10, size: 3.2, duration: 10 });
+  skyItems.push({ emoji: "☀️", x: WORLD_ZONE_WIDTH * 2 + 120, topPct: 8, size: 3.4, duration: 10 });
+
+  // Birds scattered through the forest and path zones
+  const birdPositions = [220, 480, 760, WORLD_ZONE_WIDTH + 200, WORLD_ZONE_WIDTH + 560, WORLD_ZONE_WIDTH + 820];
+  birdPositions.forEach((x, i) => {
+    skyItems.push({
+      emoji: "🐦",
+      x,
+      topPct: 20 + (i % 3) * 6,
+      size: 1.4,
+      duration: 6 + (i % 3),
+    });
+  });
+
+  // Seagulls over the beach zone
+  const seagullPositions = [
+    WORLD_ZONE_WIDTH * 2 + 60, WORLD_ZONE_WIDTH * 2 + 340,
+    WORLD_ZONE_WIDTH * 2 + 620, WORLD_ZONE_WIDTH * 2 + 880,
+  ];
+  seagullPositions.forEach((x, i) => {
+    skyItems.push({
+      emoji: "🕊️",
+      x,
+      topPct: 15 + (i % 2) * 10,
+      size: 1.6,
+      duration: 7,
+    });
+  });
+
+  skyItems.forEach((item, i) => {
+    const el = document.createElement("span");
+    el.className = "parallax-item";
+    el.style.left = item.x + "px";
+    el.style.top = item.topPct + "%";
+    el.style.fontSize = item.size + "rem";
+    el.style.animationDuration = item.duration + "s";
+    el.style.animationDelay = (i % 7) * 0.4 + "s";
+    el.textContent = item.emoji;
+    sky.appendChild(el);
+  });
 }
 
 /* Far hill silhouettes, color-matched per zone, positioned by

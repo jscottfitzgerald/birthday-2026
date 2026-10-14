@@ -808,6 +808,24 @@ h1 {
   transform: translateX(-50%) scaleX(-1);
 }
 
+.nav-character.walking {
+  animation: walkBob 0.35s ease-in-out infinite;
+}
+
+.nav-character.facing-left.walking {
+  animation: walkBobFlipped 0.35s ease-in-out infinite;
+}
+
+@keyframes walkBob {
+  0%, 100% { transform: translateX(-50%) translateY(0) rotate(-4deg); }
+  50% { transform: translateX(-50%) translateY(-8px) rotate(4deg); }
+}
+
+@keyframes walkBobFlipped {
+  0%, 100% { transform: translateX(-50%) scaleX(-1) translateY(0) rotate(-4deg); }
+  50% { transform: translateX(-50%) scaleX(-1) translateY(-8px) rotate(4deg); }
+}
+
 .nav-stop {
   position: absolute;
   width: 48px;
