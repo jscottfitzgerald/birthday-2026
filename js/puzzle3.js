@@ -30,8 +30,9 @@ const STOPS = [
     key: "stop2",
     icon: "❓",
     worldX: WORLD_ZONE_WIDTH + 500, // inside the cobbled path zone
-    question: "Placeholder question 2 (path)?",
-    answers: ["placeholder answer 2"],
+    question:
+      "Under the MHRA regulatory guidance for Software as a Medical Device (SaMD), what specific 4-letter acronym denotes a pre-agreed document allowing manufacturers to define and implement planned modifications (such as AI model updates) without triggering a full re-assessment?",
+    answers: ["pccp", "predetermined change control plan"],
   },
   {
     key: "stop3",
