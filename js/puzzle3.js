@@ -349,7 +349,7 @@ function loadAnsweredStops() {
    items always visually sit on the correct ground, regardless of
    each zone's sky/ground split. Items are spaced >= 15% apart on x
    to avoid stacking on top of each other. */
-const GROUND_LINE_TOP_PCT = { zoneForest: 42, zonePath: 38, zoneBeach: 52 };
+const GROUND_LINE_TOP_PCT = { zoneForest: 42, zonePath: 42, zoneBeach: 52 };
 
 const ZONE_DECORATIONS = {
   zoneForest: [
@@ -539,24 +539,41 @@ function buildMidLayer() {
     mid.appendChild(fly);
   });
 
-  // Fence posts and a lamp post along the cobbled path zone
-  const fencePositions = [
-    WORLD_ZONE_WIDTH + 60, WORLD_ZONE_WIDTH + 160, WORLD_ZONE_WIDTH + 260,
-    WORLD_ZONE_WIDTH + 620, WORLD_ZONE_WIDTH + 720, WORLD_ZONE_WIDTH + 820,
+  // Street lamps lining the cobbled path zone
+  const lampPositions = [
+    WORLD_ZONE_WIDTH + 60, WORLD_ZONE_WIDTH + 260, WORLD_ZONE_WIDTH + 460,
+    WORLD_ZONE_WIDTH + 660, WORLD_ZONE_WIDTH + 860,
   ];
-  fencePositions.forEach((x) => {
-    const post = document.createElement("div");
-    post.className = "fence-post";
-    post.style.left = x + "px";
-    mid.appendChild(post);
-  });
-
-  const lampPositions = [WORLD_ZONE_WIDTH + 420];
   lampPositions.forEach((x) => {
     const lamp = document.createElement("div");
     lamp.className = "lamp-post";
     lamp.style.left = x + "px";
     mid.appendChild(lamp);
+  });
+
+  // Little shops and houses along the cobbled path zone
+  const buildings = [
+    { x: WORLD_ZONE_WIDTH + 140, type: "house", color: "#e8c39e", roof: "#c0504d" },
+    { x: WORLD_ZONE_WIDTH + 340, type: "shop", color: "#f4e0c0", roof: "#6b8e7f" },
+    { x: WORLD_ZONE_WIDTH + 560, type: "house", color: "#d9b38c", roof: "#8f5a3c" },
+    { x: WORLD_ZONE_WIDTH + 780, type: "shop", color: "#eaddc6", roof: "#b05a6b" },
+  ];
+  buildings.forEach((b, i) => {
+    const building = document.createElement("div");
+    building.className = "mini-building";
+    building.style.left = b.x + "px";
+    building.style.setProperty("--wall-color", b.color);
+    building.style.setProperty("--roof-color", b.roof);
+    building.innerHTML = `
+      <div class="building-roof"></div>
+      <div class="building-wall">
+        <div class="building-door"></div>
+        <div class="building-window"></div>
+        <div class="building-window"></div>
+      </div>
+      ${b.type === "shop" ? '<div class="building-sign">🏪</div>' : ""}
+    `;
+    mid.appendChild(building);
   });
 
   // Palm trees scattered through the beach zone

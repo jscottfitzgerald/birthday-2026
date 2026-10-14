@@ -618,24 +618,69 @@ h1 {
   transform-origin: left center;
 }
 
-/* Mid-layer fence posts for the cobbled path zone */
-.fence-post {
+/* Little shops and houses lining the cobbled path zone */
+.mini-building {
   position: absolute;
   bottom: 0;
-  width: 10px;
-  height: 46px;
-  background: #b58a5c;
-  border-radius: 3px 3px 0 0;
+  width: 90px;
+  height: 100px;
 }
 
-.fence-post::after {
-  content: "";
+.building-wall {
   position: absolute;
-  top: 10px;
-  left: -14px;
-  width: 38px;
-  height: 6px;
-  background: #b58a5c;
+  bottom: 0;
+  width: 90px;
+  height: 70px;
+  background: var(--wall-color, #e8c39e);
+  border-radius: 2px 2px 0 0;
+  box-shadow: inset -6px 0 0 rgba(0, 0, 0, 0.08);
+}
+
+.building-roof {
+  position: absolute;
+  bottom: 68px;
+  left: -6px;
+  width: 0;
+  height: 0;
+  border-left: 51px solid transparent;
+  border-right: 51px solid transparent;
+  border-bottom: 30px solid var(--roof-color, #c0504d);
+}
+
+.building-door {
+  position: absolute;
+  bottom: 0;
+  left: 36px;
+  width: 18px;
+  height: 36px;
+  background: #6b4a2f;
+  border-radius: 4px 4px 0 0;
+}
+
+.building-window {
+  position: absolute;
+  bottom: 42px;
+  width: 16px;
+  height: 16px;
+  background: #cdeaff;
+  border: 2px solid #fff;
+  border-radius: 2px;
+}
+
+.building-window:nth-of-type(2) {
+  left: 10px;
+}
+
+.building-window:nth-of-type(3) {
+  left: 64px;
+}
+
+.building-sign {
+  position: absolute;
+  bottom: 74px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.4rem;
 }
 
 .lamp-post {
@@ -713,7 +758,7 @@ h1 {
 }
 
 .nav-zone.zone-path {
-  background: linear-gradient(180deg, #bdeaff 0%, #bdeaff 38%, #d9c7a8 38%, #cdb998 100%);
+  background: linear-gradient(180deg, #bdeaff 0%, #bdeaff 42%, #d9c7a8 42%, #cdb998 100%);
 }
 
 .nav-zone.zone-path::after {
@@ -722,7 +767,7 @@ h1 {
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 62%;
+  height: 58%;
   background-image: repeating-linear-gradient(
       45deg,
       rgba(120, 95, 60, 0.18) 0,
