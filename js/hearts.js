@@ -7,6 +7,7 @@
    - Always: floating hearts
    - After Puzzle 1 solved: + the birthday photo
    - After Puzzle 2 solved: + watermelons
+   - After Puzzle 3 solved: + airplanes
    ============================================ */
 
 function spawnHearts(containerId = "heartsBg", count = 27) {
@@ -25,6 +26,10 @@ function spawnHearts(containerId = "heartsBg", count = 27) {
 
   if (typeof isSolved === "function" && isSolved("puzzle2")) {
     pool.push({ type: "emoji", value: "🍉" });
+  }
+
+  if (typeof isSolved === "function" && isSolved("puzzle3")) {
+    pool.push({ type: "emoji", value: "✈️" });
   }
 
   for (let i = 0; i < count; i++) {
