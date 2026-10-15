@@ -35,7 +35,13 @@ const PUZZLES = [
   },
   {
     key: "puzzle4",
-    title: "Puzzle 4: Coming Soon",
+    title: "Puzzle 4: Wordle",
+    icon: "🟪",
+    href: "puzzle4.html",
+  },
+  {
+    key: "puzzle5",
+    title: "Puzzle 5: Coming Soon",
     icon: "🔒",
     href: null,
   },
