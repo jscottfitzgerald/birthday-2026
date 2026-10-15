@@ -7,9 +7,11 @@
    ============================================ */
 
 /* ---- EDIT ME ----
-   Set the real answer word here (must be exactly 5 letters).
+   Set the real answer word here (must be exactly 5 letters),
+   and the clue phrase revealed once she solves it.
 */
-const WORDLE_ANSWER = "HEART";
+const WORDLE_ANSWER = "SOUTH";
+const WORDLE_REVEALED_CLUE = "Come South of a Border With Me";
 const WORDLE_MAX_GUESSES = 6;
 const WORDLE_WORD_LENGTH = 5;
 
@@ -132,10 +134,7 @@ function submitGuess() {
   if (currentGuess === WORDLE_ANSWER) {
     gameOver = true;
     markSolved("puzzle4");
-    setTimeout(() => {
-      document.getElementById("wordleGame").style.display = "none";
-      document.getElementById("wordleComplete").style.display = "block";
-    }, 900);
+    revealWinAnimation(tiles);
     return;
   }
 
@@ -144,8 +143,53 @@ function submitGuess() {
 
   if (currentRow >= WORDLE_MAX_GUESSES) {
     gameOver = true;
-    message.textContent = `Out of guesses! The word was ${WORDLE_ANSWER}.`;
+    message.innerHTML = "";
+    message.textContent = "Out of guesses! ";
+    const tryAgainBtn = document.createElement("button");
+    tryAgainBtn.type = "button";
+    tryAgainBtn.className = "btn";
+    tryAgainBtn.textContent = "Try Again";
+    tryAgainBtn.style.marginTop = "8px";
+    tryAgainBtn.addEventListener("click", resetGame);
+    message.appendChild(document.createElement("br"));
+    message.appendChild(tryAgainBtn);
   }
+}
+
+/**
+ * Resets the board for another attempt. She has unlimited tries
+ * overall (the 6-guess limit per round is just classic Wordle
+ * pacing, not a hard fail - she can always start a fresh board).
+ */
+function resetGame() {
+  currentGuess = "";
+  currentRow = 0;
+  gameOver = false;
+  Object.keys(keyStates).forEach((k) => delete keyStates[k]);
+  document.getElementById("wordleMessage").innerHTML = "";
+  buildBoard();
+  updateKeyboardColors();
+}
+
+/**
+ * Plays a little bounce animation on the winning row, then
+ * transitions the board away to reveal the clue phrase.
+ */
+function revealWinAnimation(tiles) {
+  tiles.forEach((tile, i) => {
+    setTimeout(() => {
+      tile.classList.add("win-bounce");
+    }, i * 120);
+  });
+
+  setTimeout(() => {
+    document.getElementById("wordleGame").style.display = "none";
+    const complete = document.getElementById("wordleComplete");
+    complete.style.display = "block";
+    document.getElementById("wordleClueWord").textContent = WORDLE_ANSWER;
+    document.getElementById("wordleClueText").textContent =
+      WORDLE_REVEALED_CLUE;
+  }, tiles.length * 120 + 500);
 }
 
 /**
