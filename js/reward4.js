@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("itineraryImage").style.display = "none";
     document.getElementById("itineraryCaption").style.display = "none";
     const prank = document.getElementById("itineraryPrank");
-    prank.textContent = "You really thought I'd let you see it? 😂";
+    prank.textContent = "You really thought I'd let you see it? 😂 maybe tomorrow...";
     prank.style.display = "block";
   }, ITINERARY_REVEAL_DURATION);
 });
