@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Puzzle 5 · The Birthday Games</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="hearts-bg" id="heartsBg"></div>
+
+  <div class="container">
+    <h1>👑 Queens 👑</h1>
+    <p class="subtitle">One queen per row, column, and color. No two queens may touch!</p>
+
+    <div class="card" id="alreadySolved" style="display:none;">
+      <p>🎉 You've already solved this one! You can head to the next clue.</p>
+      <a href="reward5.html" class="btn">Open your reward 🎁</a>
+    </div>
+
+    <div id="queensGameWrapper">
+      <div class="queens-level-tabs" id="queensLevelTabs"></div>
+      <p class="queens-status" id="queensStatus"></p>
+      <p class="queens-win-banner" id="queensWinBanner" style="display:none;">🎉 Level solved!</p>
+
+      <div class="queens-board-wrapper" id="queensBoardWrapper"></div>
+
+      <div class="card" id="queensQuestionCard" style="display:none;">
+        <p id="queensQuestionText"></p>
+        <form class="answer-form" id="queensAnswerForm">
+          <input
+            type="text"
+            id="queensAnswerInput"
+            placeholder="Type your answer..."
+            autocomplete="off"
+            required
+          />
+          <button type="submit" class="btn">Submit</button>
+          <div class="feedback" id="queensAnswerFeedback"></div>
+        </form>
+      </div>
+    </div>
+
+    <div class="card" id="queensAllComplete" style="display:none;">
+      <p>🎉 You beat all 3 levels of Queens!</p>
+      <a href="reward5.html" class="btn">Open your reward 🎁</a>
+    </div>
+
+    <a href="index.html" class="back-link">← Back to The Birthday Games</a>
+  </div>
+
+  <script src="js/progress.js"></script>
+  <script src="js/hearts.js"></script>
+  <script src="js/queens-engine.js"></script>
+  <script src="js/puzzle5.js"></script>
+</body>
+</html>

@@ -1185,3 +1185,78 @@ h1 {
     font-size: 1.3rem;
   }
 }
+
+/* Puzzle 5 - Queens */
+.queens-level-tabs {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.queens-level-tab {
+  padding: 8px 14px;
+  border-radius: 20px;
+  border: none;
+  font-weight: 700;
+  font-size: 0.85rem;
+  background: #ddd;
+  color: #888;
+  cursor: pointer;
+}
+
+.queens-level-tab.active {
+  background: linear-gradient(135deg, var(--pink-mid), var(--pink-deep));
+  color: #fff;
+}
+
+.queens-level-tab.completed {
+  background: linear-gradient(135deg, #7fd896, #4fae6a);
+  color: #fff;
+}
+
+.queens-board-wrapper {
+  overflow-x: auto;
+  margin: 0 auto 14px;
+  display: flex;
+  justify-content: center;
+}
+
+.queens-board {
+  display: grid;
+  gap: 2px;
+  background: var(--text-dark);
+  padding: 2px;
+  border-radius: 6px;
+}
+
+.queens-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  user-select: none;
+  font-weight: 700;
+  position: relative;
+}
+
+.queens-cell .queens-mark {
+  pointer-events: none;
+}
+
+.queens-status {
+  text-align: center;
+  font-size: 0.9rem;
+  opacity: 0.8;
+  margin-bottom: 10px;
+}
+
+.queens-win-banner {
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--pink-darker);
+  margin: 10px 0;
+  animation: clueWordIn 0.5s ease;
+}
