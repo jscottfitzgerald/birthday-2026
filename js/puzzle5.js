@@ -16,10 +16,26 @@ const LETTER_C = ["XXXX", "X...", "X...", "X...", "XXXX"];
 const LETTER_P = ["XXXX", "X..X", "XXXX", "X...", "X...", "X..."];
 const LETTER_T = ["XXXXX", "..X..", "..X..", "..X..", "..X..", "..X.."];
 
+// Answers are matched case-insensitively. Level 3's question accepts ANY
+// answer and always shows `finalMessage` in a dialog box (a joke - it
+// never reveals whether she was right).
 const QUEENS_LEVELS = [
-  { size: 10, label: "Level 1", letter: LETTER_C, question: "Placeholder question 1?", answers: ["placeholder answer 1"] },
-  { size: 12, label: "Level 2", letter: LETTER_P, question: "Placeholder question 2?", answers: ["placeholder answer 2"] },
-  { size: 14, label: "Level 3", letter: LETTER_T, question: "Placeholder question 3?", answers: ["placeholder answer 3"] },
+  {
+    size: 10, label: "Level 1", letter: LETTER_C,
+    question: "In computer operating systems, what is the specific term for the performance-degrading state where a system spends more time servicing memory page faults than executing actual application instructions?",
+    answers: ["thrashing"],
+  },
+  {
+    size: 12, label: "Level 2", letter: LETTER_P,
+    question: "In UK pharmaceutical and clinical regulation, what is the standard 4-letter acronym for the legally binding, agency-approved document that details a medicine’s therapeutic indications, posology, contraindications, and safety profile for healthcare professionals?",
+    answers: ["smpc"],
+  },
+  {
+    size: 14, label: "Level 3", letter: LETTER_T,
+    question: "Were you paying attention to the clues in the puzzles? What three letters were hidden in the grid?",
+    acceptAnything: true,
+    finalMessage: "wouldn't tell you even if you were right!",
+  },
 ];
 
 // A palette of distinct region colors - needs to supply up to 15
@@ -211,6 +227,13 @@ function submitLevelAnswer(event) {
   const feedback = document.getElementById("queensAnswerFeedback");
   const given = input.value.trim().toLowerCase();
 
+  if (level.acceptAnything) {
+    // Joke question: whatever she types, show the dialog, then finish.
+    if (!given) return;
+    showFinalMessageDialog(level.finalMessage, finishQueensPuzzle);
+    return;
+  }
+
   const correct = level.answers.some((a) => a.trim().toLowerCase() === given);
 
   if (!correct) {
@@ -224,13 +247,50 @@ function submitLevelAnswer(event) {
 
   setTimeout(() => {
     if (currentLevelIndex === QUEENS_LEVELS.length - 1) {
-      markSolved("puzzle5");
-      document.getElementById("queensQuestionCard").style.display = "none";
-      document.getElementById("queensAllComplete").style.display = "block";
+      finishQueensPuzzle();
     } else {
       loadLevel(currentLevelIndex + 1);
     }
   }, 900);
+}
+
+function finishQueensPuzzle() {
+  markSolved("puzzle5");
+  document.getElementById("queensQuestionCard").style.display = "none";
+  document.getElementById("queensAllComplete").style.display = "block";
+}
+
+/**
+ * Shows a centered dialog box with a message and an OK button.
+ * `onClose` runs when she taps OK.
+ */
+function showFinalMessageDialog(message, onClose) {
+  const overlay = document.createElement("div");
+  overlay.style.cssText =
+    "position:fixed;inset:0;background:rgba(90,35,64,0.55);display:flex;" +
+    "align-items:center;justify-content:center;z-index:100;padding:20px;";
+
+  const box = document.createElement("div");
+  box.className = "card";
+  box.style.cssText = "max-width:340px;width:100%;margin:0;";
+
+  const text = document.createElement("p");
+  text.style.cssText = "font-size:1.15rem;font-weight:700;margin-bottom:16px;";
+  text.textContent = message;
+
+  const ok = document.createElement("button");
+  ok.type = "button";
+  ok.className = "btn";
+  ok.textContent = "OK";
+  ok.addEventListener("click", () => {
+    overlay.remove();
+    onClose();
+  });
+
+  box.appendChild(text);
+  box.appendChild(ok);
+  overlay.appendChild(box);
+  document.body.appendChild(overlay);
 }
 
 document.addEventListener("DOMContentLoaded", () => {
