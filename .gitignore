@@ -2,3 +2,6 @@
 Thumbs.db
 *.log
 node_modules/
+
+# Full itinerary - kept on this computer only, never published
+images/Itinerary.jpg
