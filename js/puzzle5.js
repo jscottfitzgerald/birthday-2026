@@ -253,4 +253,82 @@ document.addEventListener("DOMContentLoaded", () => {
     startLevel++;
   }
   loadLevel(startLevel);
+  buildLocalPreviewPanel();
 });
+
+/* ---- LOCAL PREVIEW (testing only) ----
+   Shows a small panel that lets you jump to any level already solved,
+   and view each level's placeholder question. It only appears when the
+   page is opened from this computer or a private network address
+   (localhost, 127.x, 192.168.x, 10.x, 172.16-31.x), so it never shows
+   on the live Netlify site. It does not save any progress.
+*/
+function isLocalPreviewHost() {
+  const h = window.location.hostname;
+  return (
+    h === "localhost" ||
+    /^127\./.test(h) ||
+    /^192\.168\./.test(h) ||
+    /^10\./.test(h) ||
+    /^172\.(1[6-9]|2\d|3[01])\./.test(h)
+  );
+}
+
+function previewSolvedLevel(levelIndex) {
+  loadLevel(levelIndex);
+  const size = currentPuzzle.size;
+  currentPuzzle.seedSolution.forEach((q) => {
+    cellStates[q.row][q.col] = CELL_QUEEN;
+  });
+  levelComplete = true; // freeze the board so taps don't change it
+  renderBoard();
+  document.getElementById("queensStatus").textContent =
+    `Preview: ${QUEENS_LEVELS[levelIndex].label} solved (${size}×${size})`;
+}
+
+function previewQuestion(levelIndex) {
+  loadLevel(levelIndex);
+  showLevelQuestion();
+}
+
+function buildLocalPreviewPanel() {
+  if (!isLocalPreviewHost()) return;
+
+  const panel = document.createElement("div");
+  panel.className = "card";
+  panel.style.marginTop = "16px";
+  panel.innerHTML = "<p><strong>🔧 Local preview (testing only)</strong></p>";
+
+  QUEENS_LEVELS.forEach((level, idx) => {
+    const row = document.createElement("div");
+    row.style.cssText = "display:flex;gap:8px;justify-content:center;margin:8px 0;flex-wrap:wrap;";
+
+    const solvedBtn = document.createElement("button");
+    solvedBtn.type = "button";
+    solvedBtn.className = "btn";
+    solvedBtn.textContent = `${level.label} solved`;
+    solvedBtn.addEventListener("click", () => previewSolvedLevel(idx));
+
+    const questionBtn = document.createElement("button");
+    questionBtn.type = "button";
+    questionBtn.className = "btn";
+    questionBtn.textContent = `${level.label} question`;
+    questionBtn.addEventListener("click", () => previewQuestion(idx));
+
+    row.appendChild(solvedBtn);
+    row.appendChild(questionBtn);
+    panel.appendChild(row);
+  });
+
+  const regen = document.createElement("button");
+  regen.type = "button";
+  regen.className = "btn";
+  regen.textContent = "New boards (clear saved)";
+  regen.addEventListener("click", () => {
+    QUEENS_LEVELS.forEach((_, i) => localStorage.removeItem(getPuzzleStorageKey(i)));
+    previewSolvedLevel(currentLevelIndex);
+  });
+  panel.appendChild(regen);
+
+  document.getElementById("queensGameWrapper").appendChild(panel);
+}
