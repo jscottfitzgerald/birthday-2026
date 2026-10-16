@@ -16,11 +16,12 @@
     <div class="puzzle-list" id="puzzleList"></div>
 
     <!-- Testing helper: clears saved progress. Safe to delete before sharing the real link. -->
-    <a href="index.html?reset=1" class="back-link" style="margin-top: 24px;">🔄 Reset progress (testing only)</a>
+    <!-- Hidden by default; landing.js only reveals it on your own machine/network. -->
+    <a href="index.html?reset=1" id="resetLink" class="back-link" style="margin-top: 24px; display: none;">🔄 Reset progress (testing only)</a>
   </div>
 
-  <script src="js/progress.js"></script>
+  <script src="js/progress.js?v=4"></script>
   <script src="js/hearts.js"></script>
-  <script src="js/landing.js"></script>
+  <script src="js/landing.js?v=4"></script>
 </body>
 </html>
