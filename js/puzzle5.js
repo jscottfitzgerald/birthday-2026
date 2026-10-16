@@ -312,8 +312,13 @@ function submitLevelAnswer(event) {
 
 function finishQueensPuzzle() {
   markSolved("puzzle5");
+  // Hide the whole puzzle screen (tabs, board, question, preview panel) so
+  // nothing but the finish card is left, then go straight to the reward page
+  // instead of making her scroll down to find a link.
+  document.getElementById("queensGameWrapper").style.display = "none";
   document.getElementById("queensQuestionCard").style.display = "none";
   document.getElementById("queensAllComplete").style.display = "block";
+  window.location.replace("reward5.html");
 }
 
 /**
