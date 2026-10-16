@@ -69,6 +69,55 @@ function saveLevelProgress(completedArr) {
   }
 }
 
+// A level has two stages: (1) solve the grid, (2) answer its question.
+// They are tracked separately so that once a grid is solved it is NEVER
+// shown again (the hidden letter is a clue) - even if she reloads the
+// page before answering the question.
+function getQuestionsDone() {
+  try {
+    const raw = localStorage.getItem("puzzle5QuestionsDone");
+    return raw ? JSON.parse(raw) : [];
+  } catch (e) {
+    return [];
+  }
+}
+
+function markQuestionDone(levelIndex) {
+  const done = getQuestionsDone();
+  if (!done.includes(levelIndex)) {
+    done.push(levelIndex);
+    try {
+      localStorage.setItem("puzzle5QuestionsDone", JSON.stringify(done));
+    } catch (e) {
+      /* ignore */
+    }
+  }
+}
+
+/**
+ * Enters a level at the right stage: a finished level is skipped, a level
+ * whose grid is solved goes straight to its question (grid stays hidden),
+ * and only a level with an unsolved grid shows the grid.
+ */
+function enterLevel(levelIndex) {
+  if (levelIndex >= QUEENS_LEVELS.length) {
+    finishQueensPuzzle();
+    return;
+  }
+  if (getQuestionsDone().includes(levelIndex)) {
+    enterLevel(levelIndex + 1);
+    return;
+  }
+  if (getLevelProgress().includes(levelIndex)) {
+    currentLevelIndex = levelIndex;
+    levelComplete = true;
+    buildLevelTabs();
+    showLevelQuestion();
+    return;
+  }
+  loadLevel(levelIndex);
+}
+
 function getPuzzleStorageKey(levelIndex) {
   // v3: level 3 changed from 15x15 to 14x14, so older saved boards
   // (v2 and earlier) must not be reused.
@@ -104,7 +153,9 @@ function buildLevelTabs() {
     const btn = document.createElement("button");
     btn.type = "button";
     const isCompleted = completed.includes(idx);
-    const isLocked = idx > 0 && !completed.includes(idx - 1);
+    // Locked = not unlocked yet OR already finished. A finished level can
+    // never be reopened (its grid holds the hidden letter clue).
+    const isLocked = (idx > 0 && !completed.includes(idx - 1)) || isCompleted;
     btn.className =
       "queens-level-tab" +
       (idx === currentLevelIndex ? " active" : "") +
@@ -112,7 +163,7 @@ function buildLevelTabs() {
     btn.textContent = `${level.label} (${level.size}×${level.size})` + (isCompleted ? " ✓" : "");
     btn.disabled = isLocked;
     btn.addEventListener("click", () => {
-      if (!isLocked) loadLevel(idx);
+      if (!isLocked) enterLevel(idx);
     });
     tabs.appendChild(btn);
   });
@@ -230,7 +281,10 @@ function submitLevelAnswer(event) {
   if (level.acceptAnything) {
     // Joke question: whatever she types, show the dialog, then finish.
     if (!given) return;
-    showFinalMessageDialog(level.finalMessage, finishQueensPuzzle);
+    showFinalMessageDialog(level.finalMessage, () => {
+      markQuestionDone(currentLevelIndex);
+      finishQueensPuzzle();
+    });
     return;
   }
 
@@ -245,11 +299,13 @@ function submitLevelAnswer(event) {
   feedback.textContent = "🎉 Correct!";
   feedback.className = "feedback success";
 
+  markQuestionDone(currentLevelIndex);
+
   setTimeout(() => {
     if (currentLevelIndex === QUEENS_LEVELS.length - 1) {
       finishQueensPuzzle();
     } else {
-      loadLevel(currentLevelIndex + 1);
+      enterLevel(currentLevelIndex + 1);
     }
   }, 900);
 }
@@ -306,13 +362,9 @@ document.addEventListener("DOMContentLoaded", () => {
     .getElementById("queensAnswerForm")
     .addEventListener("submit", submitLevelAnswer);
 
-  // Resume at the first not-yet-completed level
-  const completed = getLevelProgress();
-  let startLevel = 0;
-  while (completed.includes(startLevel) && startLevel < QUEENS_LEVELS.length - 1) {
-    startLevel++;
-  }
-  loadLevel(startLevel);
+  // Resume at the first level whose question hasn't been answered yet
+  // (showing its question if the grid is already solved, never the grid).
+  enterLevel(0);
   buildLocalPreviewPanel();
 });
 
@@ -324,14 +376,7 @@ document.addEventListener("DOMContentLoaded", () => {
    on the live Netlify site. It does not save any progress.
 */
 function isLocalPreviewHost() {
-  const h = window.location.hostname;
-  return (
-    h === "localhost" ||
-    /^127\./.test(h) ||
-    /^192\.168\./.test(h) ||
-    /^10\./.test(h) ||
-    /^172\.(1[6-9]|2\d|3[01])\./.test(h)
-  );
+  return isLocalHost(); // from progress.js
 }
 
 function previewSolvedLevel(levelIndex) {

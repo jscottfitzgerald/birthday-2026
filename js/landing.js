@@ -20,30 +20,35 @@ const PUZZLES = [
     title: "Puzzle 1: Countdown",
     icon: "⏳",
     href: "puzzle1.html",
+    rewardHref: "reward1.html",
   },
   {
     key: "puzzle2",
     title: "Puzzle 2: Where in the World?",
     icon: "🗺️",
     href: "puzzle2.html",
+    rewardHref: "reward2.html",
   },
   {
     key: "puzzle3",
     title: "Puzzle 3: Navigate & Answer",
     icon: "🧭",
     href: "puzzle3.html",
+    rewardHref: "reward3.html",
   },
   {
     key: "puzzle4",
     title: "Puzzle 4: Wordle",
     icon: "🟪",
     href: "puzzle4.html",
+    rewardHref: "reward4.html",
   },
   {
     key: "puzzle5",
     title: "Puzzle 5: Queens",
     icon: "👑",
     href: "puzzle5.html",
+    rewardHref: "reward5.html",
   },
   {
     key: "puzzle6",
@@ -60,17 +65,26 @@ function renderPuzzleList() {
   PUZZLES.forEach((puzzle, index) => {
     const prevSolved = index === 0 ? true : isSolved(PUZZLES[index - 1].key);
     const solved = isSolved(puzzle.key);
-    const isAvailable = !!puzzle.href && prevSolved;
+
+    // A solved puzzle can never be reopened: its tile leads to the reward
+    // page instead. Unsolved puzzles open only once the previous is solved.
+    let targetHref = null;
+    if (solved && puzzle.rewardHref) {
+      targetHref = puzzle.rewardHref;
+    } else if (puzzle.href && prevSolved) {
+      targetHref = puzzle.href;
+    }
+    const isAvailable = !!targetHref;
 
     const el = document.createElement(isAvailable ? "a" : "div");
     el.className = "puzzle-tile " + (isAvailable ? "unlocked" : "locked");
     if (isAvailable) {
-      el.href = puzzle.href;
+      el.href = targetHref;
     }
 
     let statusText;
     if (solved) {
-      statusText = "Solved ✓";
+      statusText = "Solved ✓ · tap to see your reward";
     } else if (isAvailable) {
       statusText = "Tap to play";
     } else {
@@ -92,4 +106,10 @@ function renderPuzzleList() {
 document.addEventListener("DOMContentLoaded", () => {
   spawnHearts();
   renderPuzzleList();
+
+  // The reset link is for your own testing only - never show it on the live site.
+  const resetLink = document.getElementById("resetLink");
+  if (resetLink && isLocalHost()) {
+    resetLink.style.display = "";
+  }
 });
