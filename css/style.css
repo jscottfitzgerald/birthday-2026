@@ -1216,6 +1216,17 @@ h1 {
   color: #fff;
 }
 
+.queens-level-indicator {
+  display: inline-block;
+  margin: 0;
+  padding: 8px 18px;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #fff;
+  background: linear-gradient(135deg, var(--pink-mid), var(--pink-deep));
+}
+
 .queens-board-wrapper {
   overflow-x: auto;
   margin: 0 auto 14px;

@@ -2,13 +2,11 @@
    Puzzle 5 - Queens (3 increasing difficulty levels)
    Uses js/queens-engine.js for puzzle generation and
    win-condition validation. Each level ends with a
-   question before moving to the next (placeholder for
-   now - questions to be added later).
+   question before moving to the next one.
    ============================================ */
 
 /* ---- EDIT ME ----
-   Level sizes and placeholder post-level questions.
-   Replace the question text/answers once you have them.
+   Level sizes, hidden letters and post-level questions.
 */
 // One colored region on each board is shaped like a letter
 // (C, P, T for levels 1, 2, 3). "X" marks a letter cell.
@@ -147,26 +145,13 @@ function getOrCreatePuzzle(levelIndex) {
 function buildLevelTabs() {
   const tabs = document.getElementById("queensLevelTabs");
   tabs.innerHTML = "";
-  const completed = getLevelProgress();
 
-  QUEENS_LEVELS.forEach((level, idx) => {
-    const btn = document.createElement("button");
-    btn.type = "button";
-    const isCompleted = completed.includes(idx);
-    // Locked = not unlocked yet OR already finished. A finished level can
-    // never be reopened (its grid holds the hidden letter clue).
-    const isLocked = (idx > 0 && !completed.includes(idx - 1)) || isCompleted;
-    btn.className =
-      "queens-level-tab" +
-      (idx === currentLevelIndex ? " active" : "") +
-      (isCompleted ? " completed" : "");
-    btn.textContent = `${level.label} (${level.size}×${level.size})` + (isCompleted ? " ✓" : "");
-    btn.disabled = isLocked;
-    btn.addEventListener("click", () => {
-      if (!isLocked) enterLevel(idx);
-    });
-    tabs.appendChild(btn);
-  });
+  // A plain "Level 2 of 3" line instead of clickable level buttons: she
+  // can't jump between levels, and the grid sizes aren't revealed.
+  const indicator = document.createElement("p");
+  indicator.className = "queens-level-indicator";
+  indicator.textContent = `Level ${currentLevelIndex + 1} of ${QUEENS_LEVELS.length}`;
+  tabs.appendChild(indicator);
 }
 
 function loadLevel(levelIndex) {
@@ -375,7 +360,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 /* ---- LOCAL PREVIEW (testing only) ----
    Shows a small panel that lets you jump to any level already solved,
-   and view each level's placeholder question. It only appears when the
+   and view each level's question. It only appears when the
    page is opened from this computer or a private network address
    (localhost, 127.x, 192.168.x, 10.x, 172.16-31.x), so it never shows
    on the live Netlify site. It does not save any progress.
