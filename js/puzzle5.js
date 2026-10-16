@@ -34,7 +34,7 @@ const QUEENS_LEVELS = [
     size: 14, label: "Level 3", letter: LETTER_T,
     question: "Were you paying attention to the clues in the puzzles? What three letters were hidden in the grid?",
     acceptAnything: true,
-    finalMessage: "wouldn't tell you even if you were right!",
+    finalMessage: "Lol, I wouldn't tell you even if you were right!",
   },
 ];
 
