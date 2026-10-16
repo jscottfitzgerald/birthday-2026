@@ -10,10 +10,16 @@
    Level sizes and placeholder post-level questions.
    Replace the question text/answers once you have them.
 */
+// One colored region on each board is shaped like a letter
+// (C, P, T for levels 1, 2, 3). "X" marks a letter cell.
+const LETTER_C = ["XXXX", "X...", "X...", "X...", "XXXX"];
+const LETTER_P = ["XXXX", "X..X", "XXXX", "X...", "X...", "X..."];
+const LETTER_T = ["XXXXX", "..X..", "..X..", "..X..", "..X..", "..X.."];
+
 const QUEENS_LEVELS = [
-  { size: 10, label: "Level 1", question: "Placeholder question 1?", answers: ["placeholder answer 1"] },
-  { size: 12, label: "Level 2", question: "Placeholder question 2?", answers: ["placeholder answer 2"] },
-  { size: 15, label: "Level 3", question: "Placeholder question 3?", answers: ["placeholder answer 3"] },
+  { size: 10, label: "Level 1", letter: LETTER_C, question: "Placeholder question 1?", answers: ["placeholder answer 1"] },
+  { size: 12, label: "Level 2", letter: LETTER_P, question: "Placeholder question 2?", answers: ["placeholder answer 2"] },
+  { size: 15, label: "Level 3", letter: LETTER_T, question: "Placeholder question 3?", answers: ["placeholder answer 3"] },
 ];
 
 // A palette of distinct region colors - needs to supply up to 15
@@ -48,7 +54,9 @@ function saveLevelProgress(completedArr) {
 }
 
 function getPuzzleStorageKey(levelIndex) {
-  return `puzzle5Puzzle_${levelIndex}`;
+  // v2: boards now contain a letter-shaped region, so old saved boards
+  // (without letters) must not be reused.
+  return `puzzle5Puzzle_v2_${levelIndex}`;
 }
 
 function getOrCreatePuzzle(levelIndex) {
@@ -62,7 +70,7 @@ function getOrCreatePuzzle(levelIndex) {
   } catch (e) {
     /* ignore and regenerate */
   }
-  const puzzle = generateQueensPuzzle(size);
+  const puzzle = generateQueensPuzzle(size, QUEENS_LEVELS[levelIndex].letter);
   try {
     localStorage.setItem(key, JSON.stringify(puzzle));
   } catch (e) {

@@ -28,10 +28,83 @@ const CELL_QUEEN = 2;
  * solution exists (the seed placement) while still
  * allowing other solutions to count as a win too.
  */
-function generateQueensPuzzle(size) {
+function generateQueensPuzzle(size, letterRows) {
+  if (letterRows) {
+    return generateLetterPuzzle(size, letterRows);
+  }
   const solution = findQueensSolution(size);
   const regions = growRegionsFromSeeds(size, solution);
   return { size, regions, seedSolution: solution };
+}
+
+/**
+ * Generates a puzzle where region 0 is shaped like a letter.
+ * `letterRows` is an array of strings, e.g. ["XXX", "X..", "XXX"],
+ * where "X" marks a letter cell. The letter is dropped at a random
+ * spot on the board, then we search for a queen placement that puts
+ * exactly ONE queen inside the letter and at least one queen in every
+ * separate pocket of non-letter cells (so every pocket can become a
+ * region). The remaining regions are grown around the letter.
+ */
+function generateLetterPuzzle(size, letterRows) {
+  const h = letterRows.length;
+  const w = letterRows[0].length;
+
+  for (let attempt = 0; attempt < 8000; attempt++) {
+    const top = Math.floor(Math.random() * (size - h + 1));
+    const left = Math.floor(Math.random() * (size - w + 1));
+
+    const isLetter = Array.from({ length: size }, () => new Array(size).fill(false));
+    for (let r = 0; r < h; r++) {
+      for (let c = 0; c < w; c++) {
+        if (letterRows[r][c] === "X") isLetter[top + r][left + c] = true;
+      }
+    }
+
+    const solution = findQueensSolution(size);
+    const inLetter = solution.filter((q) => isLetter[q.row][q.col]);
+    if (inLetter.length !== 1) continue;
+    const others = solution.filter((q) => !isLetter[q.row][q.col]);
+
+    // Every pocket of non-letter cells needs at least one queen seed
+    const comp = Array.from({ length: size }, () => new Array(size).fill(-1));
+    let compCount = 0;
+    for (let r = 0; r < size; r++) {
+      for (let c = 0; c < size; c++) {
+        if (isLetter[r][c] || comp[r][c] !== -1) continue;
+        const stack = [[r, c]];
+        comp[r][c] = compCount;
+        while (stack.length) {
+          const [cr, cc] = stack.pop();
+          [[-1, 0], [1, 0], [0, -1], [0, 1]].forEach(([dr, dc]) => {
+            const nr = cr + dr;
+            const nc = cc + dc;
+            if (
+              nr >= 0 && nr < size && nc >= 0 && nc < size &&
+              !isLetter[nr][nc] && comp[nr][nc] === -1
+            ) {
+              comp[nr][nc] = compCount;
+              stack.push([nr, nc]);
+            }
+          });
+        }
+        compCount++;
+      }
+    }
+    const compsWithSeed = new Set(others.map((q) => comp[q.row][q.col]));
+    if (compsWithSeed.size !== compCount) continue;
+
+    const prefilled = Array.from({ length: size }, (_, r) =>
+      Array.from({ length: size }, (_, c) => (isLetter[r][c] ? 0 : -1))
+    );
+    const seeds = others.map((q, i) => ({ row: q.row, col: q.col, region: i + 1 }));
+    const regions = growRegionsFromSeeds(size, seeds, prefilled, 0);
+    return { size, regions, seedSolution: solution };
+  }
+
+  // Extremely unlikely fallback: plain puzzle without a letter
+  const solution = findQueensSolution(size);
+  return { size, regions: growRegionsFromSeeds(size, solution), seedSolution: solution };
 }
 
 /**
@@ -86,14 +159,28 @@ function findQueensSolution(size) {
  * flood-fill (BFS with shuffled frontier) until every
  * cell on the board is assigned to a region.
  */
-function growRegionsFromSeeds(size, seeds) {
-  const regions = Array.from({ length: size }, () => new Array(size).fill(-1));
-  const frontiers = seeds.map((seed, idx) => {
-    regions[seed.row][seed.col] = idx;
-    return [{ row: seed.row, col: seed.col }];
+function growRegionsFromSeeds(size, seeds, prefilled, lockedIdx) {
+  // Optional `prefilled` is a size x size grid where already-assigned
+  // cells hold a region index and the rest hold -1 (used to pin a
+  // letter-shaped region in place). `lockedIdx` is a region that must
+  // never grow beyond its prefilled cells.
+  const regions = prefilled
+    ? prefilled.map((row) => row.slice())
+    : Array.from({ length: size }, () => new Array(size).fill(-1));
+
+  const frontiers = Array.from({ length: size }, () => []);
+  seeds.forEach((seed, idx) => {
+    const regionIdx = seed.region !== undefined ? seed.region : idx;
+    regions[seed.row][seed.col] = regionIdx;
+    frontiers[regionIdx].push({ row: seed.row, col: seed.col });
   });
 
-  let remaining = size * size - seeds.length;
+  let remaining = 0;
+  for (let r = 0; r < size; r++) {
+    for (let c = 0; c < size; c++) {
+      if (regions[r][c] === -1) remaining++;
+    }
+  }
 
   while (remaining > 0) {
     const order = shuffledIndices(frontiers.length);
@@ -131,12 +218,16 @@ function growRegionsFromSeeds(size, seeds) {
       }
     }
 
-    if (!grewAny) {
+    // Only fall back to the safety valve once every region has truly run
+    // out of room to grow (a round that merely picked dead-end cells is
+    // not a reason to bail out early).
+    if (!grewAny && frontiers.every((f) => f.length === 0)) {
+      const safeDefault = lockedIdx === 0 ? 1 : 0;
       for (let r = 0; r < size; r++) {
         for (let c = 0; c < size; c++) {
           if (regions[r][c] === -1) {
-            const neighborRegion = findAdjacentRegion(regions, size, r, c);
-            regions[r][c] = neighborRegion !== -1 ? neighborRegion : 0;
+            const neighborRegion = findAdjacentRegion(regions, size, r, c, lockedIdx);
+            regions[r][c] = neighborRegion !== -1 ? neighborRegion : safeDefault;
             remaining--;
           }
         }
@@ -147,12 +238,15 @@ function growRegionsFromSeeds(size, seeds) {
   return regions;
 }
 
-function findAdjacentRegion(regions, size, row, col) {
+function findAdjacentRegion(regions, size, row, col, lockedIdx) {
   const dirs = [[-1, 0], [1, 0], [0, -1], [0, 1]];
   for (const [dr, dc] of dirs) {
     const nr = row + dr;
     const nc = col + dc;
-    if (nr >= 0 && nr < size && nc >= 0 && nc < size && regions[nr][nc] !== -1) {
+    if (
+      nr >= 0 && nr < size && nc >= 0 && nc < size &&
+      regions[nr][nc] !== -1 && regions[nr][nc] !== lockedIdx
+    ) {
       return regions[nr][nc];
     }
   }
