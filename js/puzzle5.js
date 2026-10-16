@@ -19,7 +19,7 @@ const LETTER_T = ["XXXXX", "..X..", "..X..", "..X..", "..X..", "..X.."];
 const QUEENS_LEVELS = [
   { size: 10, label: "Level 1", letter: LETTER_C, question: "Placeholder question 1?", answers: ["placeholder answer 1"] },
   { size: 12, label: "Level 2", letter: LETTER_P, question: "Placeholder question 2?", answers: ["placeholder answer 2"] },
-  { size: 15, label: "Level 3", letter: LETTER_T, question: "Placeholder question 3?", answers: ["placeholder answer 3"] },
+  { size: 14, label: "Level 3", letter: LETTER_T, question: "Placeholder question 3?", answers: ["placeholder answer 3"] },
 ];
 
 // A palette of distinct region colors - needs to supply up to 15
@@ -54,9 +54,9 @@ function saveLevelProgress(completedArr) {
 }
 
 function getPuzzleStorageKey(levelIndex) {
-  // v2: boards now contain a letter-shaped region, so old saved boards
-  // (without letters) must not be reused.
-  return `puzzle5Puzzle_v2_${levelIndex}`;
+  // v3: level 3 changed from 15x15 to 14x14, so older saved boards
+  // (v2 and earlier) must not be reused.
+  return `puzzle5Puzzle_v3_${levelIndex}`;
 }
 
 function getOrCreatePuzzle(levelIndex) {

@@ -14,15 +14,14 @@
     <p class="subtitle">You beat all 3 levels of Queens!</p>
 
     <div class="card">
-      <p>Tap below to see your reward:</p>
-      <a
-        href="images/Flight.jpg"
-        class="btn"
-        target="_blank"
-        rel="noopener"
-      >
-        Open the Surprise ✈️
-      </a>
+      <p id="flightPrompt">I suppose you want to know the flight details?</p>
+      <button type="button" class="btn" id="flightRevealBtn">Click to reveal ✈️</button>
+      <img
+        id="flightImage"
+        src="images/Flight.jpg"
+        alt="Our flight itinerary"
+        style="display:none; width: 100%; margin-top: 14px; border-radius: 12px; box-shadow: 0 6px 16px rgba(217, 76, 138, 0.25);"
+      />
     </div>
 
     <a href="index.html" class="back-link">← Back to The Birthday Games</a>
