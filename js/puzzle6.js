@@ -33,6 +33,8 @@ let previewMode = false; // set by the local preview panel: nothing is saved
 let previewReveal = false;
 let lastYou = "";
 let lastPc = "";
+let computerTimer = null; // pending computer shot
+let questionTimer = null; // pending "show the question" after a win
 
 function bsGetList(key) {
   try {
@@ -117,6 +119,12 @@ function renderLog() {
 }
 
 function startGame(i) {
+  // Drop anything still pending from a previous game, and go back to normal
+  // (saving) mode - the local preview buttons switch preview mode on again
+  // AFTER calling this.
+  clearTimeout(computerTimer);
+  clearTimeout(questionTimer);
+  previewMode = false;
   gameIndex = i;
   gameOver = false;
   started = false;
@@ -163,7 +171,7 @@ function handleEnemyCellClick(r, c) {
   busy = true;
   el("bsStatus").textContent = "Computer is thinking…";
   renderLog();
-  setTimeout(computerTurn, BS_COMPUTER_DELAY);
+  computerTimer = setTimeout(computerTurn, BS_COMPUTER_DELAY);
 }
 
 function computerTurn() {
@@ -193,7 +201,7 @@ function endGame(won) {
   }
   el("bsStatus").textContent = "You sank the whole enemy fleet! 🎉";
   if (!previewMode) bsAddToList(BS_KEY_WON, gameIndex);
-  setTimeout(showQuestion, 1400);
+  questionTimer = setTimeout(showQuestion, 1400);
 }
 
 function showQuestion() {
@@ -220,6 +228,7 @@ function finishBattleships() {
  * comes back), otherwise a fresh battle starts.
  */
 function enterGame(i) {
+  previewMode = false;
   if (i >= BATTLE_GAMES.length) {
     finishBattleships();
     return;
@@ -294,8 +303,8 @@ function buildBattlePreviewPanel() {
     reveal.className = "btn";
     reveal.textContent = `${g.label}: show enemy ships + ${g.letterName}`;
     reveal.addEventListener("click", () => {
-      previewMode = true;
       startGame(i);
+      previewMode = true;
       previewReveal = true;
       renderEnemyBoard();
       el("bsStatus").textContent =
@@ -312,10 +321,49 @@ function buildBattlePreviewPanel() {
       showQuestion();
     });
 
+    const skip = document.createElement("button");
+    skip.type = "button";
+    skip.className = "btn";
+    skip.textContent = `⏩ Skip: win ${g.label}`;
+    skip.addEventListener("click", () => skipWinGame(i));
+
+    row.appendChild(skip);
     row.appendChild(reveal);
     row.appendChild(q);
     panel.appendChild(row);
   });
 
+  const skipAll = document.createElement("button");
+  skipAll.type = "button";
+  skipAll.className = "btn";
+  skipAll.style.marginTop = "6px";
+  skipAll.textContent = "⏩⏩ Skip everything → reward";
+  skipAll.addEventListener("click", skipAllRounds);
+  panel.appendChild(skipAll);
+
   el("bsGameWrapper").appendChild(panel);
+}
+
+/**
+ * Local test only: wins a game instantly, exactly as a real win would
+ * (all enemy ships sunk, win saved, then that game's question appears and
+ * answering it carries on to the next game).
+ */
+function skipWinGame(i) {
+  startGame(i);
+  started = true;
+  enemyBoard.ships.forEach((s) =>
+    s.cells.forEach((p) => bsFire(enemyBoard, p.row, p.col))
+  );
+  renderEnemyBoard();
+  endGame(true);
+}
+
+/** Local test only: marks every game and question done and opens the reward. */
+function skipAllRounds() {
+  BATTLE_GAMES.forEach((_, i) => {
+    bsAddToList(BS_KEY_WON, i);
+    bsAddToList(BS_KEY_ASKED, i);
+  });
+  finishBattleships();
 }

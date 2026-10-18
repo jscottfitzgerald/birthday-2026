@@ -41,6 +41,12 @@ function guardReward(puzzleKey, redirectTo = "index.html") {
 
 function resetProgress() {
   localStorage.removeItem(PROGRESS_KEY);
+  // Also clear every puzzle's own saved state (Queens boards and levels,
+  // Battleships games, the map round, ...). Without this a "reset" leaves
+  // puzzles half-finished and they can skip themselves straight to the end.
+  Object.keys(localStorage)
+    .filter((k) => k.startsWith("puzzle"))
+    .forEach((k) => localStorage.removeItem(k));
 }
 
 /**
