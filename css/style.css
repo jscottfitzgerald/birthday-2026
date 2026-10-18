@@ -1271,3 +1271,115 @@ h1 {
   margin: 10px 0;
   animation: clueWordIn 0.5s ease;
 }
+
+/* Puzzle 6 - Battleships */
+.bs-indicator-row {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.bs-indicator {
+  display: inline-block;
+  padding: 8px 18px;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #fff;
+  background: linear-gradient(135deg, var(--pink-mid), var(--pink-deep));
+}
+
+.bs-status {
+  font-weight: 700;
+  margin: 6px 0;
+  min-height: 24px;
+}
+
+.bs-log {
+  font-size: 0.85rem;
+  opacity: 0.85;
+  min-height: 36px;
+  margin: 0 0 8px;
+}
+
+.bs-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin: 10px 0 6px;
+}
+
+.bs-board-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 6px;
+}
+
+.bs-board {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 2px;
+  width: min(100%, 340px);
+  padding: 3px;
+  background: #2c6e91;
+  border-radius: 8px;
+}
+
+.bs-board.mini {
+  width: min(70%, 230px);
+}
+
+.bs-cell {
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #bfe6f7;
+  border-radius: 3px;
+  font-size: clamp(9px, 3vw, 15px);
+  line-height: 1;
+  user-select: none;
+  cursor: pointer;
+}
+
+.bs-board.mini .bs-cell {
+  cursor: default;
+  font-size: clamp(7px, 2.2vw, 11px);
+}
+
+.bs-cell.miss {
+  background: #e4f3fa;
+  color: #5b8aa3;
+  cursor: default;
+}
+
+.bs-cell.hit {
+  background: #ffb199;
+  cursor: default;
+}
+
+.bs-cell.sunk {
+  background: #ff7a5c;
+  cursor: default;
+}
+
+.bs-cell.ship {
+  background: #5d6d7e;
+}
+
+/* Local preview only: shows what's hidden on the enemy board */
+.bs-cell.preview-ship {
+  background: #34495e;
+}
+
+.bs-cell.preview-letter {
+  background: #ffd24d;
+  box-shadow: inset 0 0 0 1px #e0a800;
+}
+
+.bs-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 12px 0 4px;
+}

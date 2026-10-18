@@ -52,7 +52,14 @@ const PUZZLES = [
   },
   {
     key: "puzzle6",
-    title: "Puzzle 6: Coming Soon",
+    title: "Puzzle 6: Battleships",
+    icon: "🚢",
+    href: "puzzle6.html",
+    rewardHref: "reward6.html",
+  },
+  {
+    key: "puzzle7",
+    title: "Puzzle 7: Coming Soon",
     icon: "🔒",
     href: null,
   },
