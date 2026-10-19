@@ -9,12 +9,35 @@
    ============================================ */
 
 /* ---- EDIT ME ----
-   The hidden letter for each game and the question asked after
-   winning it. Answers are matched case-insensitively. */
+   The hidden letter for each game and the question asked after winning it.
+   Each question has a type:
+   - "yesno":  Yes / No buttons. Yes shows yesMessage and moves on; No shows
+               noMessage and she has to answer again.
+   - "slider": a slider from min to max. Any value is accepted: shows
+               `message`, then moves on.
+   - "text":   free text. Any non-empty answer is accepted: shows `message`,
+               then moves on.
+   Every message appears in a dialog box she closes with OK. */
 const BATTLE_GAMES = [
-  { label: "Game 1", letter: BS_LETTER_C, letterName: "C", question: "Placeholder question 1?", answers: ["placeholder answer 1"] },
-  { label: "Game 2", letter: BS_LETTER_P, letterName: "P", question: "Placeholder question 2?", answers: ["placeholder answer 2"] },
-  { label: "Game 3", letter: BS_LETTER_T, letterName: "T", question: "Placeholder question 3?", answers: ["placeholder answer 3"] },
+  {
+    label: "Game 1", letter: BS_LETTER_C, letterName: "C",
+    type: "yesno",
+    question: "So the weekend is over, did you have a good time?",
+    yesMessage: "I'm glad to hear that my love.",
+    noMessage: "Please report your concerns to the game-master.",
+  },
+  {
+    label: "Game 2", letter: BS_LETTER_P, letterName: "P",
+    type: "slider", min: 1, max: 10, startValue: 5,
+    question: "How much more excited are you feeling for our trip?",
+    message: "Your answer will be taken into consideration.",
+  },
+  {
+    label: "Game 3", letter: BS_LETTER_T, letterName: "T",
+    type: "text",
+    question: "Finally, how many clues did you spot?",
+    message: "Oh dear, you weren't even looking were you?",
+  },
 ];
 
 let BS_COMPUTER_DELAY = 700; // ms the computer "thinks" before firing
@@ -209,10 +232,73 @@ function showQuestion() {
   el("bsPlay").style.display = "none";
   el("bsQuestionCard").style.display = "block";
   el("bsQuestionText").textContent = g.question;
+
+  // Show only the input that belongs to this question's type
+  // ("" lets the stylesheet decide how it is displayed).
+  el("bsChoiceRow").style.display = g.type === "yesno" ? "" : "none";
+  el("bsSliderRow").style.display = g.type === "slider" ? "" : "none";
+  el("bsAnswerForm").style.display = g.type === "text" ? "" : "none";
+
   el("bsAnswerInput").value = "";
-  el("bsAnswerFeedback").textContent = "";
-  el("bsAnswerFeedback").className = "feedback";
+  if (g.type === "slider") {
+    const slider = el("bsSlider");
+    slider.min = g.min;
+    slider.max = g.max;
+    slider.value = g.startValue;
+    updateSliderLabel();
+  }
   renderIndicator();
+}
+
+function updateSliderLabel() {
+  const g = BATTLE_GAMES[gameIndex];
+  el("bsSliderValue").textContent = `${el("bsSlider").value} / ${g.max}`;
+}
+
+let dialogOpen = false;
+
+/** Centered dialog box with a message and an OK button. */
+function bsShowDialog(message, onClose) {
+  if (dialogOpen) return; // ignore a second tap while one is showing
+  dialogOpen = true;
+
+  const overlay = document.createElement("div");
+  overlay.style.cssText =
+    "position:fixed;inset:0;background:rgba(90,35,64,0.55);display:flex;" +
+    "align-items:center;justify-content:center;z-index:100;padding:20px;";
+
+  const box = document.createElement("div");
+  box.className = "card";
+  box.style.cssText = "max-width:340px;width:100%;margin:0;";
+
+  const text = document.createElement("p");
+  text.style.cssText = "font-size:1.15rem;font-weight:700;margin-bottom:16px;";
+  text.textContent = message;
+
+  const ok = document.createElement("button");
+  ok.type = "button";
+  ok.className = "btn";
+  ok.textContent = "OK";
+  ok.addEventListener("click", () => {
+    overlay.remove();
+    dialogOpen = false;
+    onClose();
+  });
+
+  box.appendChild(text);
+  box.appendChild(ok);
+  overlay.appendChild(box);
+  document.body.appendChild(overlay);
+}
+
+/** Shows the dialog; once she taps OK, optionally moves on to the next game. */
+function answerWithDialog(message, advance) {
+  const thisGame = gameIndex;
+  bsShowDialog(message, () => {
+    if (!advance || previewMode) return;
+    bsAddToList(BS_KEY_ASKED, thisGame);
+    enterGame(thisGame + 1);
+  });
 }
 
 function finishBattleships() {
@@ -245,21 +331,25 @@ function enterGame(i) {
   startGame(i);
 }
 
+/** Game 3: free text - any non-empty answer gets the dialog. */
 function submitAnswer(event) {
   event.preventDefault();
   const g = BATTLE_GAMES[gameIndex];
-  const feedback = el("bsAnswerFeedback");
-  const given = el("bsAnswerInput").value.trim().toLowerCase();
-  if (!g.answers.some((a) => a.trim().toLowerCase() === given)) {
-    feedback.textContent = "Not quite, try again! 💭";
-    feedback.className = "feedback error";
-    return;
-  }
-  feedback.textContent = "🎉 Correct!";
-  feedback.className = "feedback success";
-  if (previewMode) return;
-  bsAddToList(BS_KEY_ASKED, gameIndex);
-  setTimeout(() => enterGame(gameIndex + 1), 900);
+  if (!el("bsAnswerInput").value.trim()) return;
+  answerWithDialog(g.message, true);
+}
+
+/** Game 1: Yes moves on, No shows the game-master message and stays. */
+function answerYesNo(isYes) {
+  const g = BATTLE_GAMES[gameIndex];
+  if (isYes) answerWithDialog(g.yesMessage, true);
+  else answerWithDialog(g.noMessage, false);
+}
+
+/** Game 2: any slider value is accepted. */
+function submitSlider() {
+  const g = BATTLE_GAMES[gameIndex];
+  answerWithDialog(g.message, true);
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -272,6 +362,10 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   el("bsAnswerForm").addEventListener("submit", submitAnswer);
+  el("bsYesBtn").addEventListener("click", () => answerYesNo(true));
+  el("bsNoBtn").addEventListener("click", () => answerYesNo(false));
+  el("bsSlider").addEventListener("input", updateSliderLabel);
+  el("bsSliderSubmit").addEventListener("click", submitSlider);
   el("bsShuffleBtn").addEventListener("click", () => {
     if (started || gameOver) return;
     playerBoard = bsNewPlayerBoard(BS_SIZE, BS_FLEET);

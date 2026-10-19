@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Puzzle 6 · The Birthday Games</title>
-<link rel="stylesheet" href="css/style.css?v=6" />
+<link rel="stylesheet" href="css/style.css?v=7" />
 </head>
 <body>
   <div class="hearts-bg" id="heartsBg"></div>
@@ -39,10 +39,25 @@
 
       <div class="card" id="bsQuestionCard" style="display:none;">
         <p id="bsQuestionText"></p>
-        <form class="answer-form" id="bsAnswerForm">
+
+        <!-- Game 1: yes / no -->
+        <div class="bs-choice-row" id="bsChoiceRow" style="display:none;">
+          <button type="button" class="btn" id="bsYesBtn">Yes</button>
+          <button type="button" class="btn" id="bsNoBtn">No</button>
+        </div>
+
+        <!-- Game 2: slider -->
+        <div class="bs-slider-row" id="bsSliderRow" style="display:none;">
+          <p class="bs-slider-value" id="bsSliderValue"></p>
+          <input type="range" id="bsSlider" min="1" max="10" step="1" value="5" />
+          <div class="bs-slider-ends"><span>1</span><span>10</span></div>
+          <button type="button" class="btn" id="bsSliderSubmit">Submit</button>
+        </div>
+
+        <!-- Game 3: free text -->
+        <form class="answer-form" id="bsAnswerForm" style="display:none;">
           <input type="text" id="bsAnswerInput" placeholder="Type your answer..." autocomplete="off" required />
           <button type="submit" class="btn">Submit</button>
-          <div class="feedback" id="bsAnswerFeedback"></div>
         </form>
       </div>
     </div>
@@ -58,6 +73,6 @@
   <script src="js/progress.js?v=4"></script>
   <script src="js/hearts.js"></script>
   <script src="js/battleships-engine.js"></script>
-  <script src="js/puzzle6.js"></script>
+  <script src="js/puzzle6.js?v=7"></script>
 </body>
 </html>

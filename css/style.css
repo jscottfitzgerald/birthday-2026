@@ -1383,3 +1383,40 @@ h1 {
   flex-wrap: wrap;
   margin: 12px 0 4px;
 }
+
+/* Battleships question types: yes/no buttons and a 1-10 slider */
+.bs-choice-row {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 8px;
+}
+
+.bs-choice-row .btn {
+  min-width: 100px;
+}
+
+.bs-slider-row {
+  margin-top: 8px;
+}
+
+.bs-slider-value {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--pink-darker);
+  margin: 4px 0 10px;
+}
+
+#bsSlider {
+  width: 100%;
+  accent-color: var(--pink-deep);
+  height: 32px;
+}
+
+.bs-slider-ends {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  opacity: 0.7;
+  margin-bottom: 14px;
+}
