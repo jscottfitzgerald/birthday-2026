@@ -45,8 +45,10 @@ const RIDDLES = [
 ];
 
 /* ---- EDIT ME ----
-   The message in the dialog box after the third riddle, and the text on
-   its button. */
+   The message in the dialog box after the first two riddles, and after
+   the third riddle. */
+const BETWEEN_MESSAGE = "Correct, next question!";
+const BETWEEN_BUTTON = "Next";
 const FINAL_MESSAGE =
   "You're on to your next clue. Three creatures, three identities. What might their alter egos have in common?";
 const FINAL_BUTTON = "OK";
@@ -158,7 +160,9 @@ function handleSubmit(e) {
     if (currentIndex >= RIDDLES.length) {
       finishPuzzle();
     } else {
-      renderRiddle();
+      showDialog(BETWEEN_MESSAGE, BETWEEN_BUTTON, () => {
+        renderRiddle();
+      });
     }
   } else {
     const feedback = el("riddleFeedback");

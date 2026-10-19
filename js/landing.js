@@ -59,7 +59,7 @@ const PUZZLES = [
   },
   {
     key: "puzzle7",
-    title: "Puzzle 7: Riddles",
+    title: "Puzzle 7: Wordplay",
     icon: "❓",
     href: "puzzle7.html",
     // no rewardHref: this puzzle has no reward page
