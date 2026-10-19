@@ -449,7 +449,7 @@ function buildBattlePreviewPanel() {
   skipAll.type = "button";
   skipAll.className = "btn";
   skipAll.style.marginTop = "6px";
-  skipAll.textContent = "⏩⏩ Skip everything → final message";
+  skipAll.textContent = "⏩⏩ Skip everything → F → final message";
   skipAll.addEventListener("click", skipAllRounds);
   panel.appendChild(skipAll);
 
@@ -457,8 +457,11 @@ function buildBattlePreviewPanel() {
   finalBtn.type = "button";
   finalBtn.className = "btn";
   finalBtn.style.marginTop = "6px";
-  finalBtn.textContent = "Show the final message (saves nothing)";
-  finalBtn.addEventListener("click", () => bsShowDialog(BATTLE_FINAL_MESSAGE, () => {}));
+  finalBtn.textContent = "Show F → final message (saves nothing)";
+  finalBtn.addEventListener("click", () => {
+    const last = BATTLE_GAMES[BATTLE_GAMES.length - 1];
+    bsShowDialog(last.message, () => bsShowDialog(BATTLE_FINAL_MESSAGE, () => {}), last.buttonLabel);
+  });
   panel.appendChild(finalBtn);
 
   el("bsGameWrapper").appendChild(panel);
@@ -485,5 +488,7 @@ function skipAllRounds() {
     bsAddToList(BS_KEY_WON, i);
     bsAddToList(BS_KEY_ASKED, i);
   });
-  finishBattleships();
+  // Same order she gets for real: the last question's dialog (F), then the final message.
+  const last = BATTLE_GAMES[BATTLE_GAMES.length - 1];
+  bsShowDialog(last.message, finishBattleships, last.buttonLabel);
 }
