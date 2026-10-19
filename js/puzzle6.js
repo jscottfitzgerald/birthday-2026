@@ -37,6 +37,7 @@ const BATTLE_GAMES = [
     type: "text",
     question: "Finally, how many clues did you spot?",
     message: "Oh dear, you weren't even looking were you?",
+    buttonLabel: "F", // the button on this dialog says "F" instead of "OK"
   },
 ];
 
@@ -266,7 +267,7 @@ function updateSliderLabel() {
 let dialogOpen = false;
 
 /** Centered dialog box with a message and an OK button. */
-function bsShowDialog(message, onClose) {
+function bsShowDialog(message, onClose, buttonLabel) {
   if (dialogOpen) return; // ignore a second tap while one is showing
   dialogOpen = true;
 
@@ -286,7 +287,7 @@ function bsShowDialog(message, onClose) {
   const ok = document.createElement("button");
   ok.type = "button";
   ok.className = "btn";
-  ok.textContent = "OK";
+  ok.textContent = buttonLabel || "OK";
   ok.addEventListener("click", () => {
     overlay.remove();
     dialogOpen = false;
@@ -302,11 +303,12 @@ function bsShowDialog(message, onClose) {
 /** Shows the dialog; once she taps OK, optionally moves on to the next game. */
 function answerWithDialog(message, advance) {
   const thisGame = gameIndex;
+  // A game can set its own button text (e.g. buttonLabel: "F"); otherwise "OK".
   bsShowDialog(message, () => {
     if (!advance || previewMode) return;
     bsAddToList(BS_KEY_ASKED, thisGame);
     enterGame(thisGame + 1);
-  });
+  }, BATTLE_GAMES[thisGame].buttonLabel);
 }
 
 function finishBattleships() {
