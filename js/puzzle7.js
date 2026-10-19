@@ -8,24 +8,39 @@
 
 /* ---- EDIT ME ----
    The three riddles.
-   - riddle:  the text shown to her.
+   - riddle:  the verse shown to her (line breaks are preserved).
+   - hint:    revealed when she taps the Hint button.
    - answers: every answer that counts as correct. Capitals, spaces at
-              the ends and punctuation are ignored, so "A Map!" matches "a map".
+              the ends and punctuation are ignored, so "The Robin!" matches "the robin".
    - wrong:   (optional) message shown for a wrong answer on this riddle.
-   NOTE: these three are PLACEHOLDERS until the real riddles are written.
 */
 const RIDDLES = [
   {
-    riddle: "PLACEHOLDER 1: What has keys but can't open locks?",
-    answers: ["piano", "a piano", "keyboard", "a keyboard"],
+    riddle:
+      "A little rust upon the silence,\n" +
+      "A punctuation mark in grey.\n" +
+      "The smallest herald bears no message,\n" +
+      "Yet tells the year to turn its page.",
+    hint: "A splash of colour on a winter visitor.",
+    answers: ["robin", "a robin", "the robin"],
   },
   {
-    riddle: "PLACEHOLDER 2: What has hands but can't clap?",
-    answers: ["clock", "a clock", "watch", "a watch"],
+    riddle:
+      "Between the question and the answer,\n" +
+      "Something slips beyond the frame.\n" +
+      "The truth is rarely caught by chasing,\n" +
+      "And nothing here admits its name.",
+    hint: "In old tales, this trickster is rarely the fool.",
+    answers: ["fox", "a fox", "the fox"],
   },
   {
-    riddle: "PLACEHOLDER 3: What gets wetter the more it dries?",
-    answers: ["towel", "a towel"],
+    riddle:
+      "The unseen makes a map of nothing,\n" +
+      "The absent gives the walls their shape.\n" +
+      "Where sight surrenders its dominion,\n" +
+      "A thousand distances escape.",
+    hint: "Not all maps are made with eyes.",
+    answers: ["bat", "a bat", "the bat"],
   },
 ];
 
@@ -105,8 +120,12 @@ function showDialog(message, buttonLabel, onClose) {
 }
 
 function renderRiddle() {
+  const r = RIDDLES[currentIndex];
   el("riddleIndicator").textContent = `Riddle ${currentIndex + 1} of ${RIDDLES.length}`;
-  el("riddleText").textContent = RIDDLES[currentIndex].riddle;
+  el("riddleText").textContent = r.riddle;
+  el("hintText").textContent = r.hint || "";
+  el("hintText").style.display = "none";
+  el("hintBtn").style.display = r.hint ? "" : "none";
   el("riddleInput").value = "";
   el("riddleFeedback").textContent = "";
   el("riddleFeedback").className = "feedback";
@@ -151,6 +170,10 @@ document.addEventListener("DOMContentLoaded", () => {
   spawnHearts();
   currentIndex = loadIndex();
   el("riddleForm").addEventListener("submit", handleSubmit);
+  el("hintBtn").addEventListener("click", () => {
+    el("hintBtn").style.display = "none";
+    el("hintText").style.display = "block";
+  });
   if (currentIndex >= RIDDLES.length) {
     finishPuzzle();
   } else {

@@ -15,7 +15,12 @@
 
     <div class="card" id="riddleCard">
       <div class="bs-indicator-row"><span class="bs-indicator" id="riddleIndicator"></span></div>
-      <p id="riddleText"></p>
+      <p class="poem-text" id="riddleText" style="margin: 14px 0 18px;"></p>
+
+      <div style="margin-bottom: 16px;">
+        <button type="button" class="queens-btn" id="hintBtn">💡 Hint</button>
+        <p id="hintText" style="display: none; font-style: italic; font-size: 0.95rem; margin: 6px 0 0; opacity: 0.85;"></p>
+      </div>
 
       <form class="answer-form" id="riddleForm">
         <input type="text" id="riddleInput" placeholder="Type your answer..." autocomplete="off" required />
@@ -29,6 +34,6 @@
 
   <script src="js/progress.js?v=4"></script>
   <script src="js/hearts.js"></script>
-  <script src="js/puzzle7.js?v=1"></script>
+  <script src="js/puzzle7.js?v=2"></script>
 </body>
 </html>
