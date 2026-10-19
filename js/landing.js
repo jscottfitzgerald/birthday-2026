@@ -55,7 +55,7 @@ const PUZZLES = [
     title: "Puzzle 6: Battleships",
     icon: "🚢",
     href: "puzzle6.html",
-    rewardHref: "reward6.html",
+    // no rewardHref: this puzzle has no reward page
   },
   {
     key: "puzzle7",
@@ -74,10 +74,11 @@ function renderPuzzleList() {
     const solved = isSolved(puzzle.key);
 
     // A solved puzzle can never be reopened: its tile leads to the reward
-    // page instead. Unsolved puzzles open only once the previous is solved.
+    // page instead (or, for a puzzle with no reward, is not tappable at all).
+    // Unsolved puzzles open only once the previous one is solved.
     let targetHref = null;
-    if (solved && puzzle.rewardHref) {
-      targetHref = puzzle.rewardHref;
+    if (solved) {
+      targetHref = puzzle.rewardHref || null;
     } else if (puzzle.href && prevSolved) {
       targetHref = puzzle.href;
     }
@@ -91,7 +92,7 @@ function renderPuzzleList() {
 
     let statusText;
     if (solved) {
-      statusText = "Solved ✓ · tap to see your reward";
+      statusText = puzzle.rewardHref ? "Solved ✓ · tap to see your reward" : "Solved ✓";
     } else if (isAvailable) {
       statusText = "Tap to play";
     } else {

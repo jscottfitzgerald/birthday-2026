@@ -40,6 +40,12 @@ const BATTLE_GAMES = [
   },
 ];
 
+/* ---- EDIT ME ----
+   Dialog shown after ALL THREE questions have been answered (this puzzle
+   has no reward page). She taps OK and returns to the landing page. */
+const BATTLE_FINAL_MESSAGE =
+  "Maybe the clues need to be a bit more obvious, the next puzzle should help...";
+
 let BS_COMPUTER_DELAY = 700; // ms the computer "thinks" before firing
 
 const BS_KEY_WON = "puzzle6GamesWon";
@@ -304,10 +310,18 @@ function answerWithDialog(message, advance) {
 }
 
 function finishBattleships() {
-  markSolved("puzzle6");
+  // This puzzle has no reward page. Once all three questions are answered a
+  // final dialog appears; she only counts as finished when she taps OK, so
+  // reloading while the dialog is open simply shows it again. After OK she
+  // goes back to the landing page.
   el("bsGameWrapper").style.display = "none";
   el("bsAllComplete").style.display = "block";
-  window.location.replace("reward6.html");
+  bsShowDialog(BATTLE_FINAL_MESSAGE, () => {
+    markSolved("puzzle6");
+    window.location.replace(
+      window.location.pathname.replace(/puzzle\d+(?:\.html)?\/?$/i, "index.html")
+    );
+  });
 }
 
 /**
@@ -433,9 +447,17 @@ function buildBattlePreviewPanel() {
   skipAll.type = "button";
   skipAll.className = "btn";
   skipAll.style.marginTop = "6px";
-  skipAll.textContent = "⏩⏩ Skip everything → reward";
+  skipAll.textContent = "⏩⏩ Skip everything → final message";
   skipAll.addEventListener("click", skipAllRounds);
   panel.appendChild(skipAll);
+
+  const finalBtn = document.createElement("button");
+  finalBtn.type = "button";
+  finalBtn.className = "btn";
+  finalBtn.style.marginTop = "6px";
+  finalBtn.textContent = "Show the final message (saves nothing)";
+  finalBtn.addEventListener("click", () => bsShowDialog(BATTLE_FINAL_MESSAGE, () => {}));
+  panel.appendChild(finalBtn);
 
   el("bsGameWrapper").appendChild(panel);
 }
@@ -455,7 +477,7 @@ function skipWinGame(i) {
   endGame(true);
 }
 
-/** Local test only: marks every game and question done and opens the reward. */
+/** Local test only: marks every game and question done and shows the final message. */
 function skipAllRounds() {
   BATTLE_GAMES.forEach((_, i) => {
     bsAddToList(BS_KEY_WON, i);

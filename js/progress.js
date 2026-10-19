@@ -76,6 +76,10 @@ function isLocalHost(hostname) {
  * Every page that loads progress.js is covered, so a new puzzle page needs
  * no extra wiring.
  */
+// Puzzles that have no reward page: once solved, visitors go to the landing
+// page instead of a reward page.
+const PUZZLES_WITHOUT_REWARD = ["puzzle6"];
+
 (function autoLockSolvedPuzzle() {
   const path = window.location.pathname;
   const match = path.match(/puzzle(\d+)(?:\.html)?\/?$/i);
@@ -94,7 +98,9 @@ function isLocalHost(hostname) {
     if (isSolved(puzzleKey)) {
       // Hide the page first so the puzzle never flashes on screen.
       document.documentElement.style.visibility = "hidden";
-      window.location.replace(rewardUrl);
+      window.location.replace(
+        PUZZLES_WITHOUT_REWARD.includes(puzzleKey) ? indexUrl : rewardUrl
+      );
     } else if (
       number > 1 &&
       !isSolved("puzzle" + (number - 1)) &&
