@@ -47,7 +47,8 @@ const RIDDLES = [
 /* ---- EDIT ME ----
    The message in the dialog box after the third riddle, and the text on
    its button. */
-const FINAL_MESSAGE = "PLACEHOLDER: well done, you solved all three riddles!";
+const FINAL_MESSAGE =
+  "You're on to your next clue. Three creatures, three identities. What might their alter egos have in common?";
 const FINAL_BUTTON = "OK";
 
 /* Shown under the box when an answer is wrong (unless the riddle has its own). */
