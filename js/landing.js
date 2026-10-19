@@ -52,7 +52,7 @@ const PUZZLES = [
   },
   {
     key: "puzzle6",
-    title: "Puzzle 6: Battleships",
+    title: "Puzzle 6: Melonships",
     icon: "🚢",
     href: "puzzle6.html",
     // no rewardHref: this puzzle has no reward page
