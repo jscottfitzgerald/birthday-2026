@@ -41,6 +41,12 @@ function guardReward(puzzleKey, redirectTo = "index.html") {
 
 function resetProgress() {
   localStorage.removeItem(PROGRESS_KEY);
+  // Also clear every puzzle's own saved state (Queens boards and levels,
+  // Battleships games, the map round, ...). Without this a "reset" leaves
+  // puzzles half-finished and they can skip themselves straight to the end.
+  Object.keys(localStorage)
+    .filter((k) => k.startsWith("puzzle"))
+    .forEach((k) => localStorage.removeItem(k));
 }
 
 /**
@@ -70,6 +76,10 @@ function isLocalHost(hostname) {
  * Every page that loads progress.js is covered, so a new puzzle page needs
  * no extra wiring.
  */
+// Puzzles that have no reward page: once solved, visitors go to the landing
+// page instead of a reward page.
+const PUZZLES_WITHOUT_REWARD = ["puzzle6"];
+
 (function autoLockSolvedPuzzle() {
   const path = window.location.pathname;
   const match = path.match(/puzzle(\d+)(?:\.html)?\/?$/i);
@@ -88,7 +98,9 @@ function isLocalHost(hostname) {
     if (isSolved(puzzleKey)) {
       // Hide the page first so the puzzle never flashes on screen.
       document.documentElement.style.visibility = "hidden";
-      window.location.replace(rewardUrl);
+      window.location.replace(
+        PUZZLES_WITHOUT_REWARD.includes(puzzleKey) ? indexUrl : rewardUrl
+      );
     } else if (
       number > 1 &&
       !isSolved("puzzle" + (number - 1)) &&
