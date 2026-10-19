@@ -59,9 +59,10 @@ const PUZZLES = [
   },
   {
     key: "puzzle7",
-    title: "Puzzle 7: Coming Soon",
-    icon: "🔒",
-    href: null,
+    title: "Puzzle 7: Riddles",
+    icon: "❓",
+    href: "puzzle7.html",
+    // no rewardHref: this puzzle has no reward page
   },
 ];
 
