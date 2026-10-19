@@ -1322,6 +1322,7 @@ h1 {
   padding: 3px;
   background: #2c6e91;
   border-radius: 8px;
+  container-type: inline-size;
 }
 
 .bs-board.mini {
@@ -1335,30 +1336,33 @@ h1 {
   justify-content: center;
   background: #bfe6f7;
   border-radius: 3px;
-  font-size: clamp(9px, 3vw, 15px);
+  /* The emoji is sized from the board's width so it fills the whole tile
+     at any screen size (cqw = % of the board). The px value is a fallback
+     for older browsers. */
+  font-size: 19px;
+  font-size: 6.5cqw;
   line-height: 1;
+  overflow: hidden;
   user-select: none;
   cursor: pointer;
 }
 
 .bs-board.mini .bs-cell {
   cursor: default;
-  font-size: clamp(7px, 2.2vw, 11px);
 }
 
 .bs-cell.miss {
   background: #e4f3fa;
-  color: #5b8aa3;
   cursor: default;
 }
 
 .bs-cell.hit {
-  background: #ffb199;
+  background: #ffd9cc;
   cursor: default;
 }
 
 .bs-cell.sunk {
-  background: #ff7a5c;
+  background: #ff9a80;
   cursor: default;
 }
 

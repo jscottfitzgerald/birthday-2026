@@ -86,14 +86,16 @@ function renderIndicator() {
 
 function shotCell(board, r, c, cell) {
   const shot = board.shots[r][c];
+  // A miss is a poop, a hit is a melon - the emoji fills the whole tile.
+  // A sunk ship's melons get a darker tile so she can still tell it's sunk.
   if (shot === BS_SHOT_MISS) {
     cell.classList.add("miss");
-    cell.textContent = "•";
+    cell.textContent = "💩";
   } else if (shot === BS_SHOT_HIT) {
     const ship = board.ships[board.cellShip[r][c]];
     const sunk = ship.hits === ship.length;
     cell.classList.add(sunk ? "sunk" : "hit");
-    cell.textContent = sunk ? "🔥" : "💥";
+    cell.textContent = "🍉";
   }
   return shot !== BS_SHOT_NONE;
 }
