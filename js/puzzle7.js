@@ -26,11 +26,11 @@ const RIDDLES = [
   },
   {
     riddle:
-      "Between the question and the answer,\n" +
-      "Something slips beyond the frame.\n" +
-      "The truth is rarely caught by chasing,\n" +
-      "And nothing here admits its name.",
-    hint: "In old tales, this trickster is rarely the fool.",
+      "When twilight settles on the fields,\n" +
+      "A flash of autumn slips from view.\n" +
+      "The chase begins, the trail grows cold,\n" +
+      "And someone clever slips straight through.",
+    hint: "In old tales, this trickster is rarely the fool",
     answers: ["fox", "a fox", "the fox"],
   },
   {
