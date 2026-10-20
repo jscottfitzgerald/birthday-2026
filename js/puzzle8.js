@@ -97,7 +97,7 @@ const STOPS = [
     questions: [
       {
         question:
-          "What value means “nothing here” in programming, and shows up in many languages as null?",
+          "What value means “nothing here” in programming?",
         answers: ["null", "null value"],
       },
       {
@@ -110,9 +110,9 @@ const STOPS = [
 ];
 
 const UNSCRAMBLE_QUESTION =
-  "You've collected all eight letters! Unscramble them into a single word:";
+  "Well done team, you've collected all eight letters! Unscramble them into a single word:";
 const UNSCRAMBLE_ANSWERS = ["terminal", "the terminal", "a terminal"];
-const FINAL_MESSAGE = "You get the clue if you count what you've solved";
+const FINAL_MESSAGE = "You get the real clue if you count what you've solved";
 const FINAL_BUTTON = "OK";
 
 const CHARACTER_SIZE = 60;
@@ -657,7 +657,6 @@ function buildZones() {
     ["🚲", 480, 72],
     ["🐕", 690, 75],
     ["🪴", 735, 74],
-    ["🎻", 920, 70],
   ]);
 
   decorateZone(beach, [
