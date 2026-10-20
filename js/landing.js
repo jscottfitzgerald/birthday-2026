@@ -64,6 +64,13 @@ const PUZZLES = [
     href: "puzzle7.html",
     // no rewardHref: this puzzle has no reward page
   },
+  {
+    key: "puzzle8",
+    title: "Puzzle 8: Sky Dodger",
+    icon: "✈️",
+    href: "puzzle8.html",
+    // no rewardHref: this puzzle has no reward page
+  },
 ];
 
 function renderPuzzleList() {

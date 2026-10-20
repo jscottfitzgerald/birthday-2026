@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Puzzle 8 · The Birthday Games</title>
+<link rel="stylesheet" href="css/style.css?v=9" />
+</head>
+<body>
+  <div class="container">
+    <h1>✈️ Sky Dodger ✈️</h1>
+    <p class="subtitle">Dodge the moving planes, reach all 3 checkpoints, and answer the questions to collect the scrambled clue letters!</p>
+
+    <div id="navGameWrapper">
+      <div class="nav-progress" id="navProgress">0 of 3 checkpoints solved</div>
+      <div class="p8-clues-bar" id="cluesBar"></div>
+      <p class="nav-hint">Swipe left/right to walk · Swipe up to jump · Swipe down to duck/land</p>
+
+      <div class="nav-game-area" id="navGameArea">
+        <div class="p8-status-banner" id="statusBanner"></div>
+        <div class="nav-parallax" id="navParallax"></div>
+        <div class="nav-far" id="navFar"></div>
+        <div class="nav-world" id="navWorld">
+          <div class="nav-zone zone-forest" id="zoneForest"></div>
+          <div class="nav-zone zone-path" id="zonePath"></div>
+          <div class="nav-zone zone-beach" id="zoneBeach"></div>
+        </div>
+        <img
+          id="navCharacter"
+          class="nav-character"
+          src="images/birthday-photo.png"
+          alt="Your character"
+        />
+      </div>
+    </div>
+
+    <a href="index.html" class="back-link">← Back to The Birthday Games</a>
+  </div>
+
+  <div class="question-dialog" id="questionDialog">
+    <p id="questionText"></p>
+    <form class="answer-form" id="answerForm">
+      <input
+        type="text"
+        id="answerInput"
+        placeholder="Type your answer..."
+        autocomplete="off"
+        required
+      />
+      <button type="submit" class="btn">Submit</button>
+      <div class="feedback" id="answerFeedback"></div>
+    </form>
+  </div>
+
+  <script src="js/progress.js?v=6"></script>
+  <script src="js/hearts.js?v=3"></script>
+  <script src="js/puzzle8.js?v=1"></script>
+</body>
+</html>
