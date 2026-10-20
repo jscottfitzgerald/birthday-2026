@@ -23,41 +23,95 @@ const WORLD_ZONE_WIDTH = 1000;
 const WORLD_WIDTH = WORLD_ZONE_WIDTH * 3;
 const STORAGE_KEY = "puzzle8Answered";
 
-/* ---- EDIT ME ----
-   The 3 checkpoints, their placeholder questions/answers, and the
-   scrambled letters of "TERMINAL" unlocked at each checkpoint:
-   Checkpoint 1 -> R, M, T
-   Checkpoint 2 -> L, A, E
-   Checkpoint 3 -> N, I
-   Together: R M T L A E N I (anagram of TERMINAL).
-*/
+const INTRO_MESSAGE =
+  "At each checkpoint you’ll answer a few questions, one at a time. Every correct answer earns you a letter: the first letter of the answer. Keep hold of them all, as they won’t arrive in order. When you’ve collected every letter, they’ll unscramble into a single word, and you’ll need that word.\n\n" +
+  "Eight letters, three checkpoints. No timer, but no hints either. Good luck.";
+
 const STOPS = [
   {
     key: "stop1",
+    label: "Checkpoint 1",
     icon: "🚩",
     worldX: 700,
-    clueLetters: ["R", "M", "T"],
-    question: "PLACEHOLDER QUESTION 1: What is 2 + 2?",
-    answers: ["4", "four"],
+    questions: [
+      {
+        question:
+          "What happens when a faulty product is pulled back from the market?",
+        answers: ["recall", "a recall", "product recall"],
+      },
+      {
+        question: "What kind of software gets its name from “malicious”?",
+        answers: ["malware"],
+      },
+      {
+        question:
+          "What do you call a study where participants are randomly assigned to treatment or control?",
+        answers: [
+          "trial",
+          "a trial",
+          "clinical trial",
+          "randomised controlled trial",
+          "randomized controlled trial",
+          "randomised trial",
+          "randomized trial",
+        ],
+      },
+    ],
   },
   {
     key: "stop2",
+    label: "Checkpoint 2",
     icon: "🚩",
     worldX: WORLD_ZONE_WIDTH + 600,
-    clueLetters: ["L", "A", "E"],
-    question: "PLACEHOLDER QUESTION 2: What colour is the sky on a clear day?",
-    answers: ["blue"],
+    questions: [
+      {
+        question:
+          "One word means permission to sell a medicine and also the terms for using software. What is it?",
+        answers: ["licence", "license", "a licence", "a license"],
+      },
+      {
+        question:
+          "What do you call an unwanted effect reported after someone takes a drug?",
+        answers: [
+          "adverse",
+          "adverse event",
+          "adverse reaction",
+          "adverse effect",
+          "an adverse event",
+          "an adverse reaction",
+          "an adverse effect",
+        ],
+      },
+      {
+        question:
+          "What do you call scrambling data so only someone with the key can read it?",
+        answers: ["encryption", "encrypting"],
+      },
+    ],
   },
   {
     key: "stop3",
+    label: "Checkpoint 3",
     icon: "🚩",
     worldX: WORLD_ZONE_WIDTH * 2 + 650,
-    clueLetters: ["N", "I"],
-    question: "PLACEHOLDER QUESTION 3: How many days are there in a week?",
-    answers: ["7", "seven"],
+    questions: [
+      {
+        question:
+          "What value means “nothing here” in programming, and shows up in many languages as null?",
+        answers: ["null", "null value"],
+      },
+      {
+        question:
+          "What word describes different health record systems being able to exchange and use each other’s data?",
+        answers: ["interoperability", "interoperable"],
+      },
+    ],
   },
 ];
 
+const UNSCRAMBLE_QUESTION =
+  "You've collected all eight letters! Unscramble them into a single word:";
+const UNSCRAMBLE_ANSWERS = ["terminal", "the terminal", "a terminal"];
 const FINAL_MESSAGE = "You get the clue if you count what you've solved";
 const FINAL_BUTTON = "OK";
 
@@ -94,6 +148,8 @@ let duckUntil = 0;
 let currentDirection = 0;
 let facingLeft = false;
 let activeStop = null;
+let activeQuestionIndex = 0;
+let askingUnscramble = false;
 let modalOpen = false;
 let hitCooldownUntil = 0;
 let lastFrameTime = null;
@@ -148,25 +204,9 @@ function isDucking() {
   return jumpY === 0 && performance.now() < duckUntil;
 }
 
-function renderCluesBar() {
-  const bar = document.getElementById("cluesBar");
-  if (!bar) return;
-  bar.innerHTML = "<span>Clue letters:</span>";
-  STOPS.forEach((stop) => {
-    const unlocked = answeredStops.has(stop.key);
-    stop.clueLetters.forEach((letter) => {
-      const slot = document.createElement("span");
-      slot.className = "p8-clue-slot" + (unlocked ? "" : " empty");
-      slot.textContent = unlocked ? letter : "?";
-      bar.appendChild(slot);
-    });
-  });
-}
-
 function updateProgressText() {
   document.getElementById("navProgress").textContent =
     `${answeredStops.size} of ${STOPS.length} checkpoints solved`;
-  renderCluesBar();
 }
 
 function renderWorld() {
@@ -255,8 +295,12 @@ function getRespawnX() {
   return respawn;
 }
 
+function isGamePaused() {
+  return !!(activeStop || askingUnscramble || modalOpen);
+}
+
 function checkPlaneCollisions() {
-  if (activeStop || modalOpen) return;
+  if (isGamePaused()) return;
   const now = performance.now();
   if (now < hitCooldownUntil) return;
   if (isInSafeZone(worldX)) return;
@@ -347,7 +391,7 @@ function gameLoop(timestamp) {
   const dt = Math.min(0.05, (timestamp - lastFrameTime) / 1000);
   lastFrameTime = timestamp;
 
-  if (!activeStop && !modalOpen) {
+  if (!isGamePaused()) {
     for (const p of PLANES) {
       p.x += p.dir * p.speed * dt;
       if (p.x <= p.minX) {
@@ -436,18 +480,44 @@ function handleMouseUp(e) {
   handleGesture(e.clientX - touchStartX, e.clientY - touchStartY);
 }
 
-function openQuestion(stop) {
-  activeStop = stop;
-  document.getElementById("questionText").textContent = stop.question;
-  document.getElementById("answerInput").value = "";
+function renderActiveQuestion() {
+  const ind = document.getElementById("questionIndicator");
+  const qText = document.getElementById("questionText");
+  const input = document.getElementById("answerInput");
   const feedback = document.getElementById("answerFeedback");
+
+  if (askingUnscramble) {
+    ind.textContent = "Final Word";
+    qText.textContent = UNSCRAMBLE_QUESTION;
+  } else {
+    const total = activeStop.questions.length;
+    ind.textContent = `${activeStop.label} · Question ${activeQuestionIndex + 1} of ${total}`;
+    qText.textContent = activeStop.questions[activeQuestionIndex].question;
+  }
+
+  input.value = "";
   feedback.textContent = "";
   feedback.className = "feedback";
+}
+
+function openQuestion(stop) {
+  activeStop = stop;
+  activeQuestionIndex = 0;
+  askingUnscramble = false;
+  renderActiveQuestion();
+  document.getElementById("questionDialog").classList.add("open");
+}
+
+function openUnscramblePrompt() {
+  activeStop = null;
+  askingUnscramble = true;
+  renderActiveQuestion();
   document.getElementById("questionDialog").classList.add("open");
 }
 
 function closeQuestion() {
   activeStop = null;
+  askingUnscramble = false;
   document.getElementById("questionDialog").classList.remove("open");
 }
 
@@ -459,7 +529,7 @@ function normalise(str) {
     .trim();
 }
 
-function showModalDialog(titleHtml, messageText, buttonText, onClose) {
+function showModalDialog(messageText, buttonText, onClose) {
   modalOpen = true;
   const overlay = document.createElement("div");
   overlay.style.cssText =
@@ -469,69 +539,79 @@ function showModalDialog(titleHtml, messageText, buttonText, onClose) {
   box.className = "card";
   box.style.cssText = "max-width: 380px; width: 100%; margin: 0; text-align: center;";
 
-  box.innerHTML = `
-    ${titleHtml}
-    <p style="font-size: 1.08rem; font-weight: 600; margin-bottom: 18px;">${messageText}</p>
-    <button type="button" class="btn" id="p8ModalBtn">${buttonText}</button>
-  `;
+  const p = document.createElement("p");
+  p.style.cssText =
+    "font-size: 1.02rem; font-weight: 600; margin-bottom: 18px; white-space: pre-line; line-height: 1.5;";
+  p.textContent = messageText;
 
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "btn";
+  btn.id = "p8ModalBtn";
+  btn.textContent = buttonText;
+
+  box.appendChild(p);
+  box.appendChild(btn);
   overlay.appendChild(box);
   document.body.appendChild(overlay);
 
-  box.querySelector("#p8ModalBtn").addEventListener("click", () => {
+  btn.addEventListener("click", () => {
     overlay.remove();
     modalOpen = false;
     onClose();
   });
 }
 
-function getAllScrambledLettersHtml() {
-  const letters = STOPS.flatMap((s) => s.clueLetters);
-  const badges = letters
-    .map((l) => `<span class="p8-clue-slot">${l}</span>`)
-    .join(" ");
-  return `<div class="p8-clues-bar" style="margin-bottom: 14px;">${badges}</div>`;
-}
-
 function finishPuzzle() {
   markSolved("puzzle8");
-  const headerHtml = `
-    <p style="font-size: 0.9rem; opacity: 0.8; margin-bottom: 8px;">All 8 clue letters collected:</p>
-    ${getAllScrambledLettersHtml()}
-  `;
-  showModalDialog(headerHtml, FINAL_MESSAGE, FINAL_BUTTON, () => {
+  showModalDialog(FINAL_MESSAGE, FINAL_BUTTON, () => {
     window.location.href = "index.html";
   });
 }
 
 function submitAnswer(e) {
   e.preventDefault();
-  if (!activeStop) return;
+  if (!activeStop && !askingUnscramble) return;
 
   const guess = normalise(document.getElementById("answerInput").value);
   const feedback = document.getElementById("answerFeedback");
-  const isRight = activeStop.answers.some((a) => normalise(a) === guess);
 
-  if (isRight) {
-    const solvedStop = activeStop;
-    answeredStops.add(solvedStop.key);
-    saveAnsweredStops();
-    updateProgressText();
-    renderStops();
-    closeQuestion();
-
-    if (answeredStops.size === STOPS.length) {
+  if (askingUnscramble) {
+    const isRight = UNSCRAMBLE_ANSWERS.some((a) => normalise(a) === guess);
+    if (isRight) {
+      closeQuestion();
       finishPuzzle();
     } else {
-      const unlockedHtml = solvedStop.clueLetters
-        .map((l) => `<span class="p8-clue-slot">${l}</span>`)
-        .join(" ");
-      showModalDialog(
-        `<div class="p8-clues-bar" style="margin-bottom: 12px;">${unlockedHtml}</div>`,
-        `Checkpoint solved! You unlocked the clue letters: ${solvedStop.clueLetters.join(", ")}`,
-        "Continue",
-        () => {}
-      );
+      feedback.textContent = "Not quite — try unscrambling your 8 letters again!";
+      feedback.className = "feedback error";
+    }
+    return;
+  }
+
+  const currentQ = activeStop.questions[activeQuestionIndex];
+  const isRight = currentQ.answers.some((a) => normalise(a) === guess);
+
+  if (isRight) {
+    activeQuestionIndex++;
+    if (activeQuestionIndex < activeStop.questions.length) {
+      renderActiveQuestion();
+    } else {
+      const solvedStop = activeStop;
+      answeredStops.add(solvedStop.key);
+      saveAnsweredStops();
+      updateProgressText();
+      renderStops();
+      closeQuestion();
+
+      if (answeredStops.size === STOPS.length) {
+        openUnscramblePrompt();
+      } else {
+        showModalDialog(
+          `${solvedStop.label} complete! Keep hold of your letters and head to the next checkpoint.`,
+          "Continue",
+          () => {}
+        );
+      }
     }
   } else {
     feedback.textContent = "Not quite — try again!";
@@ -716,11 +796,6 @@ document.addEventListener("DOMContentLoaded", () => {
   renderWorld();
   renderCharacter();
 
-  if (answeredStops.size === STOPS.length) {
-    finishPuzzle();
-    return;
-  }
-
   const area = getGameArea();
   area.addEventListener("touchstart", handleTouchStart, { passive: true });
   area.addEventListener("touchend", handleTouchEnd, { passive: true });
@@ -735,6 +810,12 @@ document.addEventListener("DOMContentLoaded", () => {
   document
     .getElementById("answerForm")
     .addEventListener("submit", submitAnswer);
+
+  if (answeredStops.size === STOPS.length) {
+    openUnscramblePrompt();
+  } else if (answeredStops.size === 0) {
+    showModalDialog(INTRO_MESSAGE, "Start", () => {});
+  }
 
   requestAnimationFrame(gameLoop);
 });
