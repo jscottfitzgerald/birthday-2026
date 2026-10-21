@@ -2,35 +2,34 @@
    The Birthday Games - Floating background elements
    Shared across all pages for the romantic theme.
 
-   The mix of floating elements grows as puzzles get
-   solved:
-   - Always: floating hearts
-   - After Puzzle 1 solved: + the birthday photo
-   - After Puzzle 2 solved: + watermelons
-   - After Puzzle 3 solved: + airplanes
+   Includes floating hearts, airplanes, sandtimers,
+   watermelons, and the birthday photo now that the
+   games have progressed.
    ============================================ */
 
-function spawnHearts(containerId = "heartsBg", count = 27) {
+function spawnHearts(containerId = "heartsBg", count = 30) {
   const container = document.getElementById(containerId);
   if (!container) return;
 
-  const heartEmojis = ["💖", "💕", "💗", "💓", "💘"];
+  const baseEmojis = [
+    "💖",
+    "💕",
+    "💗",
+    "💓",
+    "💘",
+    "✈️",
+    "✈️",
+    "🛩️",
+    "⏳",
+    "⏳",
+    "⌛",
+    "🍉",
+  ];
 
-  // Build the pool of floating items based on puzzle progress.
+  // Build the pool of floating items.
   // Each entry is either { type: "emoji", value } or { type: "image", value }.
-  const pool = heartEmojis.map((value) => ({ type: "emoji", value }));
-
-  if (typeof isSolved === "function" && isSolved("puzzle1")) {
-    pool.push({ type: "image", value: "images/birthday-photo.png" });
-  }
-
-  if (typeof isSolved === "function" && isSolved("puzzle2")) {
-    pool.push({ type: "emoji", value: "🍉" });
-  }
-
-  if (typeof isSolved === "function" && isSolved("puzzle3")) {
-    pool.push({ type: "emoji", value: "✈️" });
-  }
+  const pool = baseEmojis.map((value) => ({ type: "emoji", value }));
+  pool.push({ type: "image", value: "images/birthday-photo.png" });
 
   for (let i = 0; i < count; i++) {
     const item = pool[Math.floor(Math.random() * pool.length)];
