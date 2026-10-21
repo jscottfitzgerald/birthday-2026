@@ -71,6 +71,13 @@ const PUZZLES = [
     href: "puzzle8.html",
     // no rewardHref: this puzzle has no reward page
   },
+  {
+    key: "puzzle9",
+    title: "Puzzle 9: Spot the Difference",
+    icon: "🔍",
+    href: "puzzle9.html",
+    // no rewardHref: this puzzle has no reward page
+  },
 ];
 
 function renderPuzzleList() {
