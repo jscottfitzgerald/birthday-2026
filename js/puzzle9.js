@@ -63,7 +63,7 @@ const DIFFERENCES = [
 ];
 
 const FINAL_MESSAGE =
-  "Still going strong team, you only have two puzzles to go, and only so many clues I can give. Keep thinking, and you get another one tomorrow.";
+  "Still going strong team, you only have two puzzles to go, and there's only so many clues I can give. Keep thinking, and you'll get another one tomorrow.";
 const FINAL_BUTTON = "OK";
 
 let foundIds = new Set();
