@@ -15,7 +15,7 @@ const STORAGE_KEY = "puzzle9Found";
    across desktop and mobile (1.0 = exact radius r below). */
 const HOTSPOT_RADIUS_SCALE = 1.05;
 
-/* Verified 10 differences between the top half (Image A) and
+/* Verified 6 differences between the top half (Image A) and
    bottom half (Image B) of Atrium Spot the Difference Puzzle-1.png */
 const DIFFERENCES = [
   {
@@ -31,34 +31,6 @@ const DIFFERENCES = [
     x: 0.115,
     y: 0.048,
     r: 0.06,
-  },
-  {
-    id: "red_pendant_globe",
-    label: "Red pendant globe (dark crimson with black ring vs bright glowing orange-red)",
-    x: 0.318,
-    y: 0.128,
-    r: 0.052,
-  },
-  {
-    id: "left_small_blue_globe",
-    label: "Small blue pendant globe on the left pole",
-    x: 0.22,
-    y: 0.246,
-    r: 0.05,
-  },
-  {
-    id: "twin_blue_globe_right",
-    label: "Extra small blue globe next to the middle blue globe on the right pole",
-    x: 0.618,
-    y: 0.482,
-    r: 0.055,
-  },
-  {
-    id: "red_bromeliad_flower",
-    label: "Red flower on the tall plant in the central planter",
-    x: 0.658,
-    y: 0.608,
-    r: 0.055,
   },
   {
     id: "person_upper_balcony",
@@ -91,7 +63,7 @@ const DIFFERENCES = [
 ];
 
 const FINAL_MESSAGE =
-  "PLACEHOLDER: Well done! You spotted all 10 differences!";
+  "Still going strong team, you only have two puzzles to go, and only so many clues I can give. Keep thinking, and you get another one tomorrow.";
 const FINAL_BUTTON = "OK";
 
 let foundIds = new Set();
