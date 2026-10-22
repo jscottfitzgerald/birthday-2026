@@ -112,7 +112,6 @@ const WORDS = [
     row: 4,
     col: 11,
     answer: "ANONYMISE",
-    altAnswers: ["ANONYMIZE"],
     clue: "Strip out identifiers so a person can’t be recognised.",
   },
   {
