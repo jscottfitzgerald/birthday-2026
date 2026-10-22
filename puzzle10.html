@@ -4,29 +4,21 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Puzzle 10 · The Birthday Games</title>
-<link rel="stylesheet" href="css/style.css?v=11" />
+<link rel="stylesheet" href="css/style.css?v=12" />
 </head>
 <body>
   <div class="hearts-bg" id="heartsBg"></div>
 
   <div class="container">
     <h1>✏️ Crossword ✏️</h1>
-    <p class="subtitle">Two worlds collide — every 4 solved words uncovers a piece of the picture!</p>
+    <p class="subtitle">Two worlds collide — every 4 solved words reveals something you'll need to bring!</p>
 
     <div class="card">
       <div class="bs-indicator-row">
         <span class="bs-indicator" id="cwProgress">0 / 16 words solved</span>
       </div>
 
-      <div class="cw-picture-frame" id="cwPictureFrame">
-        <img id="cwRewardImg" src="images/birthday-photo.png" alt="Mystery picture" />
-        <div class="cw-picture-DynamicTiles" id="cwPicTiles">
-          <div class="cw-pic-tile" data-milestone="4">🔒<br/>4 words</div>
-          <div class="cw-pic-tile" data-milestone="8">🔒<br/>8 words</div>
-          <div class="cw-pic-tile" data-milestone="12">🔒<br/>12 words</div>
-          <div class="cw-pic-tile" data-milestone="16">🔒<br/>16 words</div>
-        </div>
-      </div>
+      <div class="cw-pack-grid" id="cwPackGrid"></div>
 
       <div class="cw-active-clue-bar">
         <button type="button" class="cw-nav-btn" id="cwPrevBtn" aria-label="Previous clue">◀</button>
@@ -58,6 +50,6 @@
 
   <script src="js/progress.js?v=8"></script>
   <script src="js/hearts.js?v=5"></script>
-  <script src="js/puzzle10.js?v=2"></script>
+  <script src="js/puzzle10.js?v=3"></script>
 </body>
 </html>

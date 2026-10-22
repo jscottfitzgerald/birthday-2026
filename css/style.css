@@ -1713,50 +1713,60 @@ h1 {
   flex-shrink: 0;
 }
 
-.cw-picture-frame {
-  position: relative;
-  width: 180px;
-  height: 180px;
-  margin: 0 auto 12px;
-  border-radius: 14px;
-  overflow: hidden;
-  border: 3px solid var(--pink-mid);
-  box-shadow: 0 4px 14px rgba(217, 76, 138, 0.25);
-  background: #fff;
-}
-
-.cw-picture-frame img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-.cw-picture-DynamicTiles {
-  position: absolute;
-  inset: 0;
+.cw-pack-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr;
+  gap: 8px;
+  margin: 0 auto 12px;
 }
 
-.cw-pic-tile {
-  background: linear-gradient(135deg, var(--pink-deep), var(--pink-darker));
-  color: #fff;
+.cw-pack-card {
+  position: relative;
+  min-height: 86px;
+  border-radius: 14px;
+  padding: 10px 8px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-weight: 800;
-  font-size: 0.8rem;
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  transition: opacity 0.55s ease, transform 0.55s ease;
+  text-align: center;
+  border: 2px solid var(--pink-mid);
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 4px 12px rgba(217, 76, 138, 0.16);
+  transition: transform 0.35s ease, background 0.35s ease;
 }
 
-.cw-pic-tile.revealed {
-  opacity: 0;
-  transform: scale(0.75);
-  pointer-events: none;
+.cw-pack-card.locked {
+  background: linear-gradient(135deg, var(--pink-deep), var(--pink-darker));
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.cw-pack-card .cw-pack-emoji {
+  font-size: 1.65rem;
+  line-height: 1.15;
+  margin-bottom: 4px;
+}
+
+.cw-pack-card .cw-pack-title {
+  font-weight: 800;
+  font-size: 0.82rem;
+  color: var(--pink-darker);
+  line-height: 1.2;
+}
+
+.cw-pack-card .cw-pack-quote {
+  font-size: 0.72rem;
+  font-style: italic;
+  color: var(--text-dark);
+  opacity: 0.85;
+  margin-top: 3px;
+  line-height: 1.25;
+}
+
+.cw-pack-card.locked .cw-pack-title {
+  color: #fff;
+  font-size: 0.8rem;
 }
 
 .cw-clues-section {

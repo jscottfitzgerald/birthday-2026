@@ -8,11 +8,33 @@
 const STORAGE_KEY = "puzzle10State";
 
 /* ---- EDIT ME ----
-   The image uncovered across the 4 milestones (4, 8, 12, 16 words)
-   and the final completion message shown at 16/16. */
-const REWARD_IMAGE = "images/birthday-photo.png";
-const FINAL_MESSAGE =
-  "PLACEHOLDER: You solved all 16 words and uncovered the whole picture!";
+   The 4 things to bring, unlocked at 4, 8, 12, and 16 solved words. */
+const REVEALS = [
+  {
+    milestone: 4,
+    emoji: "📷",
+    title: "A camera",
+    quote: "You'll want to remember this",
+  },
+  {
+    milestone: 8,
+    emoji: "🧴🧦",
+    title: "SPF & woolly socks",
+    quote: "Just because it's warm, doesn't mean it's warm everywhere",
+  },
+  {
+    milestone: 12,
+    emoji: "🍽️😋",
+    title: "An appetite",
+    quote: "Trust me, you'll need it",
+  },
+  {
+    milestone: 16,
+    emoji: "🫁⛰️",
+    title: "A good pair of lungs",
+    quote: "It's uphill in more ways than one",
+  },
+];
 const FINAL_BUTTON = "OK";
 
 const GRID_ROWS = 13;
@@ -319,6 +341,31 @@ function buildKeyboard() {
   });
 }
 
+function renderPackGrid(solvedCount) {
+  const container = document.getElementById("cwPackGrid");
+  if (!container) return;
+  container.innerHTML = "";
+
+  REVEALS.forEach((item) => {
+    const unlocked = solvedCount >= item.milestone;
+    const card = document.createElement("div");
+    card.className = "cw-pack-card" + (unlocked ? "" : " locked");
+    if (unlocked) {
+      card.innerHTML = `
+        <div class="cw-pack-emoji">${item.emoji}</div>
+        <div class="cw-pack-title">${item.title}</div>
+        <div class="cw-pack-quote">“${item.quote}”</div>
+      `;
+    } else {
+      card.innerHTML = `
+        <div class="cw-pack-emoji">🔒</div>
+        <div class="cw-pack-title">${item.milestone} words</div>
+      `;
+    }
+    container.appendChild(card);
+  });
+}
+
 function updateUI() {
   recomputeSolvedWords();
   const solvedCount = solvedWordNums.size;
@@ -332,10 +379,7 @@ function updateUI() {
     hintBtn.disabled = hintsLeft === 0 || solvedCount === WORDS.length;
   }
 
-  document.querySelectorAll("#cwPicTiles .cw-pic-tile").forEach((tile) => {
-    const m = parseInt(tile.dataset.milestone, 10);
-    tile.classList.toggle("revealed", solvedCount >= m);
-  });
+  renderPackGrid(solvedCount);
 
   const dirLabel = activeWord.dir === "across" ? "Across" : "Down";
   document.getElementById("cwActiveClue").innerHTML =
@@ -416,33 +460,36 @@ function showMilestoneDialog(milestoneCount) {
   const isFinal = milestoneCount === 16;
   if (isFinal) markSolved("puzzle10");
 
+  const reveal = REVEALS.find((r) => r.milestone === milestoneCount) || REVEALS[REVEALS.length - 1];
+
   const overlay = document.createElement("div");
   overlay.style.cssText =
     "position: fixed; inset: 0; background: rgba(90, 35, 64, 0.58); display: flex; align-items: center; justify-content: center; padding: 20px; z-index: 100;";
 
   const box = document.createElement("div");
   box.className = "card";
-  box.style.cssText = "max-width: 380px; width: 100%; margin: 0; text-align: center;";
+  box.style.cssText = "max-width: 390px; width: 100%; margin: 0; text-align: center;";
 
-  const quarterNum = milestoneCount / 4;
-  const tilesHtml = MILESTONES.map(
-    (m) =>
-      `<div class="cw-pic-tile ${milestoneCount >= m ? "revealed" : ""}">🔒</div>`
-  ).join("");
-
-  const msgText = isFinal
-    ? FINAL_MESSAGE
-    : `✨ ${milestoneCount} of 16 words solved! Piece ${quarterNum} of 4 uncovered!`;
+  const stepNum = milestoneCount / 4;
+  const allFourHtml = isFinal
+    ? `<div class="cw-pack-grid" style="margin: 12px 0 16px;">${REVEALS.map(
+        (r) => `
+        <div class="cw-pack-card">
+          <div class="cw-pack-emoji">${r.emoji}</div>
+          <div class="cw-pack-title">${r.title}</div>
+          <div class="cw-pack-quote">“${r.quote}”</div>
+        </div>`
+      ).join("")}</div>`
+    : "";
 
   box.innerHTML = `
-    <div class="cw-picture-frame" style="margin-bottom: 14px;">
-      <img src="${REWARD_IMAGE}" alt="Mystery picture" />
-      <div class="cw-picture-DynamicTiles">${tilesHtml}</div>
-    </div>
-    <p id="cwModalText" style="font-size: 1.05rem; font-weight: 600; margin-bottom: 16px; white-space: pre-line;"></p>
+    <p style="font-size: 0.85rem; opacity: 0.75; margin-bottom: 6px;">✨ ${milestoneCount} of 16 words solved · Thing to bring #${stepNum}</p>
+    <div style="font-size: 3rem; line-height: 1.15; margin: 6px 0;">${reveal.emoji}</div>
+    <p style="font-size: 1.2rem; font-weight: 800; color: var(--pink-darker); margin-bottom: 6px;">${reveal.title}</p>
+    <p style="font-size: 1rem; font-style: italic; margin-bottom: 16px;">“${reveal.quote}”</p>
+    ${allFourHtml}
     <button type="button" class="btn" id="cwModalBtn">${isFinal ? FINAL_BUTTON : "Keep going"}</button>
   `;
-  box.querySelector("#cwModalText").textContent = msgText;
 
   overlay.appendChild(box);
   document.body.appendChild(overlay);
@@ -593,7 +640,6 @@ function clearBoardForTest() {
 
 document.addEventListener("DOMContentLoaded", () => {
   spawnHearts();
-  document.getElementById("cwRewardImg").src = REWARD_IMAGE;
   loadState();
   buildBoard();
   buildClueLists();
