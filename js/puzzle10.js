@@ -152,6 +152,7 @@ const WORDS = [
 ];
 
 const MILESTONES = [4, 8, 12, 16];
+const MAX_HINTS = 8;
 
 // Build cell lookup table: grid[r][c] = { isLetter, startNum, words: [], el }
 const grid = Array.from({ length: GRID_ROWS }, (_, r) =>
@@ -184,6 +185,7 @@ let letters = Array.from({ length: GRID_ROWS }, () =>
 );
 let solvedWordNums = new Set();
 let shownMilestones = new Set();
+let hintedWordNums = new Set();
 let activeWord = WORDS[0];
 let activeCellIndex = 0;
 let modalOpen = false;
@@ -199,6 +201,9 @@ function loadState() {
     if (Array.isArray(parsed.shownMilestones)) {
       shownMilestones = new Set(parsed.shownMilestones);
     }
+    if (Array.isArray(parsed.hintedWordNums)) {
+      hintedWordNums = new Set(parsed.hintedWordNums);
+    }
   } catch (e) {}
 }
 
@@ -209,6 +214,7 @@ function saveState() {
       JSON.stringify({
         letters,
         shownMilestones: [...shownMilestones],
+        hintedWordNums: [...hintedWordNums],
       })
     );
   } catch (e) {}
@@ -221,8 +227,17 @@ function isWordSolved(w) {
   return false;
 }
 
+function isCellHintLocked(r, c) {
+  return grid[r][c].words.some(
+    (w) => hintedWordNums.has(w.num) && w.cells[0].r === r && w.cells[0].c === c
+  );
+}
+
 function isCellLocked(r, c) {
-  return grid[r][c].words.some((w) => solvedWordNums.has(w.num));
+  return (
+    grid[r][c].words.some((w) => solvedWordNums.has(w.num)) ||
+    isCellHintLocked(r, c)
+  );
 }
 
 function recomputeSolvedWords() {
@@ -309,6 +324,13 @@ function updateUI() {
   const solvedCount = solvedWordNums.size;
   document.getElementById("cwProgress").textContent =
     `${solvedCount} / ${WORDS.length} words solved`;
+
+  const hintsLeft = Math.max(0, MAX_HINTS - hintedWordNums.size);
+  const hintBtn = document.getElementById("cwHintBtn");
+  if (hintBtn) {
+    hintBtn.textContent = `💡 Hint: First Letter (${hintsLeft} left)`;
+    hintBtn.disabled = hintsLeft === 0 || solvedCount === WORDS.length;
+  }
 
   document.querySelectorAll("#cwPicTiles .cw-pic-tile").forEach((tile) => {
     const m = parseInt(tile.dataset.milestone, 10);
@@ -501,6 +523,74 @@ function handleBackspace() {
   }
 }
 
+function useHint() {
+  if (modalOpen) return;
+  const feedback = document.getElementById("cwFeedback");
+  const hintsLeft = Math.max(0, MAX_HINTS - hintedWordNums.size);
+  if (hintsLeft <= 0) {
+    if (feedback) {
+      feedback.textContent = "No hints remaining!";
+      feedback.className = "feedback error";
+    }
+    return;
+  }
+
+  const firstCell = activeWord.cells[0];
+  const expectedFirst = activeWord.answer[0];
+  if (
+    hintedWordNums.has(activeWord.num) ||
+    solvedWordNums.has(activeWord.num) ||
+    letters[firstCell.r][firstCell.c] === expectedFirst
+  ) {
+    if (feedback) {
+      feedback.textContent = `The first letter of ${activeWord.num} ${activeWord.dir === "across" ? "Across" : "Down"} is already shown — tap another clue first!`;
+      feedback.className = "feedback";
+    }
+    return;
+  }
+
+  hintedWordNums.add(activeWord.num);
+  letters[firstCell.r][firstCell.c] = expectedFirst;
+  recomputeSolvedWords();
+  saveState();
+
+  if (feedback) {
+    feedback.textContent = `💡 Revealed "${expectedFirst}" for ${activeWord.num} ${activeWord.dir === "across" ? "Across" : "Down"}!`;
+    feedback.className = "feedback success";
+  }
+
+  selectWord(activeWord, 1);
+  checkMilestones();
+}
+
+function solveAllForTest() {
+  WORDS.forEach((w) => {
+    for (let i = 0; i < w.answer.length; i++) {
+      const c = w.cells[i];
+      letters[c.r][c.c] = w.answer[i];
+    }
+  });
+  shownMilestones = new Set([4, 8, 12]);
+  recomputeSolvedWords();
+  saveState();
+  updateUI();
+  checkMilestones();
+}
+
+function clearBoardForTest() {
+  letters = Array.from({ length: GRID_ROWS }, () => Array(GRID_COLS).fill(""));
+  solvedWordNums.clear();
+  shownMilestones.clear();
+  hintedWordNums.clear();
+  localStorage.removeItem(STORAGE_KEY);
+  const progress = getProgress();
+  delete progress.puzzle10;
+  localStorage.setItem(PROGRESS_KEY, JSON.stringify(progress));
+  const feedback = document.getElementById("cwFeedback");
+  if (feedback) feedback.textContent = "";
+  selectWord(WORDS[0], 0);
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   spawnHearts();
   document.getElementById("cwRewardImg").src = REWARD_IMAGE;
@@ -511,6 +601,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.getElementById("cwPrevBtn").addEventListener("click", () => cycleWord(-1));
   document.getElementById("cwNextBtn").addEventListener("click", () => cycleWord(1));
+  document.getElementById("cwHintBtn").addEventListener("click", useHint);
+
+  if (typeof isLocalHost === "function" && isLocalHost()) {
+    const solveBtn = document.getElementById("cwSolveAllBtn");
+    const resetBtn = document.getElementById("cwResetTestBtn");
+    if (solveBtn) {
+      solveBtn.style.display = "";
+      solveBtn.addEventListener("click", solveAllForTest);
+    }
+    if (resetBtn) {
+      resetBtn.style.display = "";
+      resetBtn.addEventListener("click", clearBoardForTest);
+    }
+  }
 
   document.addEventListener("keydown", (e) => {
     if (modalOpen || e.ctrlKey || e.metaKey || e.altKey) return;
