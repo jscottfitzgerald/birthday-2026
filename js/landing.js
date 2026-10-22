@@ -78,6 +78,13 @@ const PUZZLES = [
     href: "puzzle9.html",
     // no rewardHref: this puzzle has no reward page
   },
+  {
+    key: "puzzle10",
+    title: "Puzzle 10: Crossword",
+    icon: "✏️",
+    href: "puzzle10.html",
+    // no rewardHref: this puzzle has no reward page
+  },
 ];
 
 function renderPuzzleList() {
