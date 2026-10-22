@@ -24,6 +24,10 @@ function spawnHearts(containerId = "heartsBg", count = 30) {
     "⏳",
     "⌛",
     "🍉",
+    "🧠",
+    "🧠",
+    "🥾",
+    "🥾",
   ];
 
   // Build the pool of floating items.

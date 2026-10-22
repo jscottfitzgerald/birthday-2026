@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Puzzle 10 · The Birthday Games</title>
+<link rel="stylesheet" href="css/style.css?v=12" />
+</head>
+<body>
+  <div class="hearts-bg" id="heartsBg"></div>
+
+  <div class="container">
+    <h1>✏️ Crossword ✏️</h1>
+    <p class="subtitle">Use both your brains — every 4 solved words reveals something you'll need to bring!</p>
+
+    <div class="card">
+      <div class="bs-indicator-row">
+        <span class="bs-indicator" id="cwProgress">0 / 16 words solved</span>
+      </div>
+
+      <div class="cw-pack-grid" id="cwPackGrid"></div>
+
+      <div class="cw-active-clue-bar">
+        <button type="button" class="cw-nav-btn" id="cwPrevBtn" aria-label="Previous clue">◀</button>
+        <div class="cw-active-clue-text" id="cwActiveClue">Tap a word to begin</div>
+        <button type="button" class="cw-nav-btn" id="cwNextBtn" aria-label="Next clue">▶</button>
+      </div>
+
+      <div style="display: flex; gap: 8px; justify-content: center; align-items: center; flex-wrap: wrap; margin-bottom: 8px;">
+        <button type="button" class="queens-btn" id="cwHintBtn">💡 Hint: First Letter (8 left)</button>
+        <button type="button" class="queens-btn" id="cwSolveAllBtn" style="display: none;">✨ Solve Puzzle (test)</button>
+        <button type="button" class="queens-btn" id="cwResetTestBtn" style="display: none;">🔄 Clear Board (test)</button>
+      </div>
+      <div class="feedback" id="cwFeedback" style="min-height: 20px; font-size: 0.85rem; margin-bottom: 4px;"></div>
+
+      <div class="cw-board" id="cwBoard"></div>
+
+      <div class="wordle-keyboard" id="cwKeyboard"></div>
+
+      <div class="cw-clues-section">
+        <h3>Across</h3>
+        <div id="cwAcrossList"></div>
+        <h3>Down</h3>
+        <div id="cwDownList"></div>
+      </div>
+    </div>
+
+    <a href="index.html" class="back-link">← Back to The Birthday Games</a>
+  </div>
+
+  <script src="js/progress.js?v=8"></script>
+  <script src="js/hearts.js?v=5"></script>
+  <script src="js/puzzle10.js?v=4"></script>
+</body>
+</html>
