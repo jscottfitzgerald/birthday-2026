@@ -9,14 +9,21 @@
    ============================================ */
 
 const STORAGE_KEY = "puzzle11Scene";
-const SCENE_WIDTH = 900;
+const SCENE_WIDTH = 1800;
 const CHARACTER_SIZE = 60;
-const MOVE_SPEED = 240;
+const DUCK_HEIGHT = 38;
+const MOVE_SPEED = 245;
+const JUMP_VELOCITY = 540;
+const GRAVITY = 1350;
+const FAST_FALL_GRAVITY = 3200;
+const DUCK_DURATION_MS = 900;
 const SWIPE_MIN_DISTANCE = 18;
 const PARALLAX_FACTOR = 0.35;
-const INTERACTIVE_X = 460;
-const DOOR_X = 815;
+const INTERACTIVE_X = 1050;
+const FINAL_INTERACTIVE_X = 1560;
+const DOOR_X = 1690;
 const TRIGGER_RADIUS = 56;
+const SAFE_RADIUS = 95;
 
 /* ---- EDIT ME (Scene 5 Departures Board Cipher) ----
    Each BOARDING row's gate is a letter position (1=A .. 26=Z), or "-" for space.
@@ -82,13 +89,23 @@ const SCENES = [
     interactiveIcon: "🖥️",
     glowColor: "#2ecc71",
     parallaxProps: [
-      ["🚨", 130, 12],
-      ["🌡️", 380, 14],
-      ["🚨", 670, 12],
+      ["🚨", 180, 12],
+      ["🌡️", 520, 14],
+      ["🚨", 900, 12],
+      ["🌡️", 1280, 14],
+      ["🚨", 1600, 12],
     ],
     fgProps: [
-      ["💾", 210, 66],
-      ["🔌", 600, 68],
+      ["💾", 260, 66],
+      ["🔌", 780, 68],
+      ["💾", 1340, 66],
+    ],
+    obstacles: [
+      { emoji: "🐛", type: "ground", mode: "crawl",   minX: 220,  maxX: 470,  x: 360,  dir: -1, speed: 95 },
+      { emoji: "⚡", type: "high",   mode: "fly",     minX: 480,  maxX: 760,  x: 690,  dir: -1, speed: 155 },
+      { emoji: "🔥", type: "ground", mode: "flicker", minX: 790,  maxX: 910,  x: 850,  dir: 1,  speed: 55 },
+      { emoji: "🔌", type: "ground", mode: "slide",   minX: 1180, maxX: 1420, x: 1320, dir: -1, speed: 135 },
+      { emoji: "💾", type: "high",   mode: "fly",     minX: 1360, maxX: 1580, x: 1500, dir: -1, speed: 150 },
     ],
     question: "Which session ID breaks the rule?",
     answers: ["g474"],
@@ -123,13 +140,23 @@ const SCENES = [
     interactiveIcon: "📋",
     glowColor: "#4da3ff",
     parallaxProps: [
-      ["🏭", 140, 14],
-      ["⚗️", 410, 16],
-      ["🧪", 680, 14],
+      ["🏭", 180, 14],
+      ["⚗️", 560, 16],
+      ["🧪", 940, 14],
+      ["🏭", 1320, 14],
+      ["⚗️", 1620, 16],
     ],
     fgProps: [
-      ["📦", 180, 65],
-      ["🥼", 640, 62],
+      ["📦", 240, 65],
+      ["🥼", 820, 62],
+      ["📦", 1380, 65],
+    ],
+    obstacles: [
+      { emoji: "💊", type: "ground", mode: "spin",  minX: 220,  maxX: 480,  x: 380,  dir: -1, speed: 130 },
+      { emoji: "🧪", type: "high",   mode: "fly",   minX: 490,  maxX: 760,  x: 640,  dir: -1, speed: 150 },
+      { emoji: "📦", type: "ground", mode: "slide", minX: 730,  maxX: 930,  x: 880,  dir: -1, speed: 120 },
+      { emoji: "🧴", type: "ground", mode: "hop",   minX: 1180, maxX: 1430, x: 1300, dir: 1,  speed: 125 },
+      { emoji: "🧫", type: "high",   mode: "fly",   minX: 1350, maxX: 1580, x: 1520, dir: -1, speed: 145 },
     ],
     question: "How many tablets are unaccounted for?",
     answers: ["360", "360 tablets"],
@@ -157,14 +184,23 @@ const SCENES = [
     interactiveIcon: "📇",
     glowColor: "#ff9233",
     parallaxProps: [
-      ["🕰️", 160, 14],
-      ["🗂️", 430, 16],
-      ["🪴", 700, 18],
+      ["🕰️", 200, 14],
+      ["🗂️", 580, 16],
+      ["🪴", 940, 18],
+      ["🕰️", 1320, 14],
+      ["🪴", 1620, 18],
     ],
     fgProps: [
-      ["📁", 220, 66],
-      ["🩺", 560, 66],
-      ["☎️", 680, 66],
+      ["🩺", 340, 66],
+      ["🪴", 830, 66],
+      ["🩺", 1360, 66],
+    ],
+    obstacles: [
+      { emoji: "📁", type: "ground", mode: "slide", minX: 220,  maxX: 480,  x: 410,  dir: -1, speed: 135 },
+      { emoji: "📄", type: "high",   mode: "fly",   minX: 480,  maxX: 750,  x: 620,  dir: -1, speed: 125 },
+      { emoji: "📎", type: "ground", mode: "hop",   minX: 730,  maxX: 930,  x: 840,  dir: 1,  speed: 115 },
+      { emoji: "☎️", type: "ground", mode: "slide", minX: 1180, maxX: 1430, x: 1340, dir: -1, speed: 140 },
+      { emoji: "✏️", type: "high",   mode: "fly",   minX: 1350, maxX: 1580, x: 1510, dir: -1, speed: 165 },
     ],
     question: "Which records are invalid? Enter the letters in alphabetical order.",
     answers: ["ac", "a c", "a and c"],
@@ -199,12 +235,22 @@ const SCENES = [
     interactiveIcon: "⚖️",
     glowColor: "#f7c600",
     parallaxProps: [
-      ["🏛️", 170, 13],
-      ["📜", 460, 15],
-      ["🔒", 710, 14],
+      ["🏛️", 200, 13],
+      ["📜", 600, 15],
+      ["🔒", 980, 14],
+      ["🏛️", 1360, 13],
+      ["📜", 1620, 15],
     ],
     fgProps: [
-      ["🪪", 330, 66],
+      ["🪪", 400, 66],
+      ["🪪", 1360, 66],
+    ],
+    obstacles: [
+      { emoji: "🔒", type: "ground", mode: "spin",  minX: 220,  maxX: 480,  x: 370,  dir: -1, speed: 125 },
+      { emoji: "📜", type: "high",   mode: "spin",  minX: 480,  maxX: 760,  x: 650,  dir: -1, speed: 145 },
+      { emoji: "🗃️", type: "ground", mode: "slide", minX: 730,  maxX: 930,  x: 860,  dir: -1, speed: 130 },
+      { emoji: "🔨", type: "ground", mode: "hop",   minX: 1180, maxX: 1430, x: 1310, dir: 1,  speed: 135 },
+      { emoji: "✉️", type: "high",   mode: "fly",   minX: 1350, maxX: 1580, x: 1500, dir: -1, speed: 155 },
     ],
     question: "Who holds the pseudonymised extract?",
     answers: ["brandt"],
@@ -236,14 +282,22 @@ const SCENES = [
     interactiveIcon: "🪧",
     glowColor: "#ffbf00",
     parallaxProps: [
-      ["✈️", 180, 16],
-      ["🕓", 480, 12],
-      ["✈️", 720, 18],
+      ["✈️", 220, 16],
+      ["🕓", 620, 12],
+      ["✈️", 1040, 18],
+      ["🕓", 1420, 12],
     ],
     fgProps: [
-      ["🧳", 190, 66],
-      ["🛄", 340, 66],
-      ["☕", 640, 66],
+      ["🧳", 260, 66],
+      ["🛄", 780, 66],
+      ["☕", 1280, 66],
+    ],
+    obstacles: [
+      { emoji: "🧳", type: "ground", mode: "spin",  minX: 220,  maxX: 480,  x: 390,  dir: -1, speed: 130 },
+      { emoji: "✈️", type: "high",   mode: "fly",   minX: 470,  maxX: 760,  x: 640,  dir: -1, speed: 165 },
+      { emoji: "🛄", type: "ground", mode: "slide", minX: 750,  maxX: 1020, x: 900,  dir: -1, speed: 135 },
+      { emoji: "☕", type: "high",   mode: "fly",   minX: 1000, maxX: 1270, x: 1180, dir: -1, speed: 150 },
+      { emoji: "🛒", type: "ground", mode: "slide", minX: 1200, maxX: 1440, x: 1380, dir: -1, speed: 160 },
     ],
     question: "Type the decoded message.",
     get answers() {
@@ -272,12 +326,42 @@ const SCENES = [
 let currentSceneIdx = 0;
 let sceneSolved = false;
 let worldX = 90;
+let jumpY = 0;
+let jumpVy = 0;
+let isFastFalling = false;
+let duckUntil = 0;
+let stumbleUntil = 0;
+let hitCooldownUntil = 0;
 let currentDirection = 0;
 let facingLeft = false;
 let dialogOpen = false;
 let transitioning = false;
 let lastFrameTime = null;
 let touchStartX = 0;
+let touchStartY = 0;
+let activeObstacles = [];
+let bannerTimer = null;
+
+function getInteractiveX() {
+  return currentSceneIdx === SCENES.length - 1 ? FINAL_INTERACTIVE_X : INTERACTIVE_X;
+}
+
+function isDucking() {
+  return jumpY === 0 && performance.now() < duckUntil;
+}
+
+function isStumbling() {
+  return performance.now() < stumbleUntil;
+}
+
+function showStatusBanner(text, duration = 1400) {
+  const b = document.getElementById("p11StatusBanner");
+  if (!b) return;
+  b.textContent = text;
+  b.classList.add("show");
+  if (bannerTimer) clearTimeout(bannerTimer);
+  bannerTimer = setTimeout(() => b.classList.remove("show"), duration);
+}
 
 function loadSceneIndex() {
   try {
@@ -329,7 +413,7 @@ function buildSceneDOM() {
     alarm.className = "p11-alarm-overlay";
     world.appendChild(alarm);
 
-    [110, 270, 570, 690].forEach((rx, idx) => {
+    [150, 420, 740, 1220, 1480].forEach((rx, idx) => {
       const rack = document.createElement("div");
       rack.className = "p11-rack";
       rack.style.left = `${rx}px`;
@@ -347,13 +431,15 @@ function buildSceneDOM() {
       world.appendChild(rack);
     });
   } else if (scene.id === "pharma") {
-    const conv = document.createElement("div");
-    conv.className = "p11-conveyor";
-    conv.style.left = "210px";
-    conv.innerHTML = `<div class="p11-pill-track">${"<span>💊</span>".repeat(12)}</div>`;
-    world.appendChild(conv);
+    [220, 1180].forEach((cx) => {
+      const conv = document.createElement("div");
+      conv.className = "p11-conveyor";
+      conv.style.left = `${cx}px`;
+      conv.innerHTML = `<div class="p11-pill-track">${"<span>💊</span>".repeat(12)}</div>`;
+      world.appendChild(conv);
+    });
   } else if (scene.id === "gpsurgery") {
-    [115, 280, 610].forEach((cx) => {
+    [160, 460, 760, 1240, 1500].forEach((cx) => {
       const cab = document.createElement("div");
       cab.className = "p11-cabinet";
       cab.style.left = `${cx}px`;
@@ -362,9 +448,9 @@ function buildSceneDOM() {
     });
   } else if (scene.id === "regulator") {
     [
-      [180, "📁"],
-      [412, ""],
-      [620, "💻"],
+      [300, "📁"],
+      [1002, ""],
+      [1420, "💻"],
     ].forEach(([dx, icon]) => {
       const desk = document.createElement("div");
       desk.className = "p11-desk";
@@ -373,7 +459,7 @@ function buildSceneDOM() {
       world.appendChild(desk);
     });
   } else if (scene.id === "terminal3") {
-    [110, 310, 560].forEach((wx) => {
+    [160, 480, 820, 1160].forEach((wx) => {
       const win = document.createElement("div");
       win.className = "p11-window";
       win.style.left = `${wx}px`;
@@ -381,7 +467,7 @@ function buildSceneDOM() {
     });
     const board = document.createElement("div");
     board.className = "p11-board-prop";
-    board.style.left = "370px";
+    board.style.left = `${FINAL_INTERACTIVE_X - 90}px`;
     board.textContent =
       "DEPARTURES · T3\n18:05 BA402 ████ G16 BRD\n18:08 EZ719 ████ G09 DLY\n18:10 VS104 ████ G12 BRD";
     world.appendChild(board);
@@ -396,11 +482,36 @@ function buildSceneDOM() {
     world.appendChild(d);
   });
 
+  // Build the 5 scene obstacles (3 ground, 2 high)
+  const reducedMotion =
+    typeof window.matchMedia === "function" &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const speedScale = reducedMotion ? 0.55 : 1;
+
+  activeObstacles = (scene.obstacles || []).map((o, idx) => {
+    const el = document.createElement("div");
+    el.className =
+      "p11-obstacle" +
+      (o.mode === "spin" ? " spin" : "") +
+      (o.mode === "flicker" ? " flicker" : "");
+    el.textContent = o.emoji;
+    world.appendChild(el);
+    return {
+      ...o,
+      speed: o.speed * speedScale,
+      phase: idx * 1.3,
+      hopY: 0,
+      el,
+    };
+  });
+  renderObstacles();
+
   // Central interactive glowing object
+  const interX = getInteractiveX();
   const inter = document.createElement("div");
   inter.className = "p11-interactive";
   inter.id = "p11InteractiveObj";
-  inter.style.left = `${INTERACTIVE_X}px`;
+  inter.style.left = `${interX}px`;
   inter.style.setProperty("--glow-color", scene.glowColor);
   inter.textContent = sceneSolved ? "✅" : scene.interactiveIcon;
   inter.addEventListener("click", (e) => {
@@ -426,6 +537,23 @@ function buildSceneDOM() {
   renderCameraAndCharacter();
 }
 
+function getObstacleBottomPx(o) {
+  const base = o.type === "high" ? 36 : 4;
+  return base + Math.round(o.hopY || 0);
+}
+
+function renderObstacles() {
+  activeObstacles.forEach((o) => {
+    if (!o.el) return;
+    o.el.style.left = `${o.x}px`;
+    o.el.style.bottom = `calc(24% + ${getObstacleBottomPx(o)}px)`;
+    if (o.mode !== "spin" && o.mode !== "flicker") {
+      o.el.style.transform =
+        o.dir < 0 ? "translateX(-50%) scaleX(-1)" : "translateX(-50%)";
+    }
+  });
+}
+
 function getViewportWidth() {
   return document.getElementById("p11Stage").getBoundingClientRect().width;
 }
@@ -444,12 +572,44 @@ function renderCameraAndCharacter() {
 
   const char = document.getElementById("p11Character");
   char.style.left = `${worldX - camera}px`;
+  char.style.bottom = `calc(24% + ${Math.round(jumpY)}px)`;
+  char.classList.toggle("ducking", isDucking());
+  char.classList.toggle("stumbling", isStumbling());
   char.classList.toggle("facing-left", facingLeft);
-  char.classList.toggle("walking", currentDirection !== 0 && !dialogOpen && !transitioning);
+  char.classList.toggle(
+    "walking",
+    currentDirection !== 0 &&
+      jumpY === 0 &&
+      !isDucking() &&
+      !isStumbling() &&
+      !dialogOpen &&
+      !transitioning
+  );
+}
+
+function triggerJump() {
+  if (dialogOpen || transitioning || isStumbling()) return;
+  duckUntil = 0;
+  if (jumpY <= 2) {
+    jumpY = 0;
+    jumpVy = JUMP_VELOCITY;
+    isFastFalling = false;
+  }
+}
+
+function triggerDuckOrLand() {
+  if (dialogOpen || transitioning || isStumbling()) return;
+  if (jumpY > 0) {
+    isFastFalling = true;
+    if (jumpVy > 0) jumpVy = 0;
+  } else {
+    duckUntil = performance.now() + DUCK_DURATION_MS;
+  }
+  renderCameraAndCharacter();
 }
 
 function setDirection(dir) {
-  if (dialogOpen || transitioning) return;
+  if (dialogOpen || transitioning || isStumbling()) return;
   currentDirection = dir;
   if (dir < 0) facingLeft = true;
   if (dir > 0) facingLeft = false;
@@ -527,6 +687,10 @@ function advanceToNextScene() {
   }
   transitioning = true;
   currentDirection = 0;
+  jumpY = 0;
+  jumpVy = 0;
+  duckUntil = 0;
+  stumbleUntil = 0;
   const bg = document.getElementById("p11BgLayer");
   bg.style.opacity = "0.15";
 
@@ -569,7 +733,56 @@ function handleAnswerSubmit(e) {
   const door = document.getElementById("p11Door");
   if (door) door.classList.add("unlocked");
   document.getElementById("p11StoryBanner").textContent =
-    "✨ Solved! Walk right to the glowing 🚪 door (or tap it) to enter the next scene.";
+    "✨ Solved! Dodge the remaining obstacles and reach the glowing 🚪 door on the right.";
+}
+
+function isInSafeZone(x) {
+  if (x < 165) return true;
+  if (Math.abs(x - getInteractiveX()) <= SAFE_RADIUS) return true;
+  if (currentSceneIdx < SCENES.length - 1 && Math.abs(x - DOOR_X) <= SAFE_RADIUS) {
+    return true;
+  }
+  return false;
+}
+
+function checkObstacleCollisions() {
+  if (dialogOpen || transitioning) return;
+  const now = performance.now();
+  if (now < hitCooldownUntil || isInSafeZone(worldX)) return;
+
+  const charHeight = isDucking() ? DUCK_HEIGHT : CHARACTER_SIZE;
+  const charBottom = jumpY;
+  const charTop = jumpY + charHeight;
+  const charHalfW = 19;
+
+  for (const o of activeObstacles) {
+    if (Math.abs(worldX - o.x) > charHalfW + 16) continue;
+    const obsBottom = getObstacleBottomPx(o) + 4;
+    const obsTop = obsBottom + 22;
+
+    if (charTop > obsBottom && charBottom < obsTop) {
+      stumbleUntil = now + 550;
+      hitCooldownUntil = now + 1350;
+      currentDirection = 0;
+      jumpY = 0;
+      jumpVy = 0;
+      isFastFalling = false;
+      duckUntil = 0;
+      worldX = Math.max(90, worldX - 42);
+
+      const stage = document.getElementById("p11Stage");
+      stage.classList.remove("hit-flash");
+      void stage.offsetWidth;
+      stage.classList.add("hit-flash");
+      showStatusBanner(
+        o.type === "high"
+          ? `💥 Watch out for ${o.emoji}! Swipe down to duck!`
+          : `💥 Watch out for ${o.emoji}! Swipe up to jump!`
+      );
+      renderCameraAndCharacter();
+      return;
+    }
+  }
 }
 
 function gameLoop(ts) {
@@ -577,16 +790,48 @@ function gameLoop(ts) {
   const dt = Math.min(0.05, (ts - lastFrameTime) / 1000);
   lastFrameTime = ts;
 
-  if (!dialogOpen && !transitioning && currentDirection !== 0) {
-    const nextX = worldX + currentDirection * MOVE_SPEED * dt;
-    const half = CHARACTER_SIZE / 2;
-    worldX = Math.max(half, Math.min(SCENE_WIDTH - half, nextX));
-    if (worldX <= half || worldX >= SCENE_WIDTH - half) {
-      currentDirection = 0;
+  if (!dialogOpen && !transitioning) {
+    for (const o of activeObstacles) {
+      o.x += o.dir * o.speed * dt;
+      if (o.x <= o.minX) {
+        o.x = o.minX;
+        o.dir = 1;
+      } else if (o.x >= o.maxX) {
+        o.x = o.maxX;
+        o.dir = -1;
+      }
+      if (o.mode === "hop") {
+        o.phase += dt * 6.5;
+        o.hopY = Math.abs(Math.sin(o.phase)) * 18;
+      }
     }
-    renderCameraAndCharacter();
+    renderObstacles();
 
-    if (!sceneSolved && Math.abs(worldX - INTERACTIVE_X) <= TRIGGER_RADIUS) {
+    if (jumpY > 0 || jumpVy > 0) {
+      const g = isFastFalling ? FAST_FALL_GRAVITY : GRAVITY;
+      jumpVy -= g * dt;
+      jumpY += jumpVy * dt;
+      if (jumpY <= 0) {
+        jumpY = 0;
+        jumpVy = 0;
+        isFastFalling = false;
+      }
+    }
+
+    if (!isStumbling() && currentDirection !== 0) {
+      const nextX = worldX + currentDirection * MOVE_SPEED * dt;
+      const half = CHARACTER_SIZE / 2;
+      worldX = Math.max(half, Math.min(SCENE_WIDTH - half, nextX));
+      if (worldX <= half || worldX >= SCENE_WIDTH - half) {
+        currentDirection = 0;
+      }
+    }
+
+    renderCameraAndCharacter();
+    checkObstacleCollisions();
+
+    const interX = getInteractiveX();
+    if (!sceneSolved && Math.abs(worldX - interX) <= TRIGGER_RADIUS) {
       openSceneDialog();
     } else if (
       sceneSolved &&
@@ -600,13 +845,22 @@ function gameLoop(ts) {
   requestAnimationFrame(gameLoop);
 }
 
-function handleSwipe(dx) {
-  if (dialogOpen || transitioning) return;
-  if (Math.abs(dx) < SWIPE_MIN_DISTANCE) {
+function handleGesture(dx, dy) {
+  if (dialogOpen || transitioning || isStumbling()) return;
+  const absX = Math.abs(dx);
+  const absY = Math.abs(dy);
+
+  if (Math.max(absX, absY) < SWIPE_MIN_DISTANCE) {
     setDirection(0);
     return;
   }
-  setDirection(dx > 0 ? 1 : -1);
+
+  if (absY > absX) {
+    if (dy < 0) triggerJump();
+    else triggerDuckOrLand();
+  } else {
+    setDirection(dx > 0 ? 1 : -1);
+  }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -622,17 +876,30 @@ document.addEventListener("DOMContentLoaded", () => {
   buildSceneDOM();
 
   const stage = document.getElementById("p11Stage");
-  stage.addEventListener("touchstart", (e) => {
-    touchStartX = e.touches[0].clientX;
-  }, { passive: true });
-  stage.addEventListener("touchend", (e) => {
-    handleSwipe(e.changedTouches[0].clientX - touchStartX);
-  }, { passive: true });
+  stage.addEventListener(
+    "touchstart",
+    (e) => {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    },
+    { passive: true }
+  );
+  stage.addEventListener(
+    "touchend",
+    (e) => {
+      handleGesture(
+        e.changedTouches[0].clientX - touchStartX,
+        e.changedTouches[0].clientY - touchStartY
+      );
+    },
+    { passive: true }
+  );
   stage.addEventListener("mousedown", (e) => {
     touchStartX = e.clientX;
+    touchStartY = e.clientY;
   });
   stage.addEventListener("mouseup", (e) => {
-    handleSwipe(e.clientX - touchStartX);
+    handleGesture(e.clientX - touchStartX, e.clientY - touchStartY);
   });
 
   document.getElementById("p11OpenPuzzleBtn").addEventListener("click", () => {
@@ -671,6 +938,10 @@ document.addEventListener("DOMContentLoaded", () => {
         currentSceneIdx = 0;
         sceneSolved = false;
         worldX = 90;
+        jumpY = 0;
+        jumpVy = 0;
+        duckUntil = 0;
+        stumbleUntil = 0;
         buildSceneDOM();
       });
     }
