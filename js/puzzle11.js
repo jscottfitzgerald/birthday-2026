@@ -66,8 +66,10 @@ function decodeDeparturesAnswer() {
     .join("");
 }
 
-const FINAL_COMPLETION_MESSAGE =
-  "This was your final clue, if you haven't got it by now but are instead feeling confused and irritated, my work here is done 🙏🏼 all will be revealed in due course, and the thread of clues will all become clear. Until then - get packing 💖🎒";
+const PACKING_LIST_URL =
+  "https://docs.google.com/document/d/1DmPSi02nWRPJgqrMregwQG7Pc3lmTvNIO9KDKQlQzlA/edit?usp=sharing";
+const FINAL_COMPLETION_HTML =
+  `This was your final clue, if you haven't got it by now but are instead feeling confused and irritated, my work here is done 🙏🏼 all will be revealed in due course, and the thread of clues will all become clear. Until then - <a href="${PACKING_LIST_URL}" target="_blank" rel="noopener noreferrer" style="color: var(--pink-darker); font-weight: 800; text-decoration: underline;">get packing 💖🎒</a>`;
 const FINAL_BUTTON = "OK";
 
 const SCENES = [
@@ -668,7 +670,7 @@ function showFinalCompletionModal() {
 
   const p = document.createElement("p");
   p.style.cssText = "font-size: 1.06rem; font-weight: 600; margin-bottom: 18px; white-space: pre-line;";
-  p.textContent = FINAL_COMPLETION_MESSAGE;
+  p.innerHTML = FINAL_COMPLETION_HTML;
 
   const btn = document.createElement("button");
   btn.type = "button";
