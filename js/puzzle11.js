@@ -66,6 +66,8 @@ function decodeDeparturesAnswer() {
     .join("");
 }
 
+const FINAL_COMPLETION_MESSAGE =
+  "This was your final clue, if you haven't got it by now but are instead feeling confused and irritated, my work here is done 🙏🏼 all will be revealed in due course, and the thread of clues will all become clear. Until then - get packing 💖🎒";
 const FINAL_BUTTON = "OK";
 
 const SCENES = [
@@ -649,7 +651,7 @@ function showFinalCompletionModal() {
 
   const p = document.createElement("p");
   p.style.cssText = "font-size: 1.06rem; font-weight: 600; margin-bottom: 18px; white-space: pre-line;";
-  p.textContent = `You've cracked all five scenes!\n\nYour clue: “${decodeDeparturesAnswer()}”`;
+  p.textContent = FINAL_COMPLETION_MESSAGE;
 
   const btn = document.createElement("button");
   btn.type = "button";
