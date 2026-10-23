@@ -199,13 +199,30 @@ const SCENES = [
     renderContent() {
       return `
         <div class="p11-sheet-box">
-          <strong>NHS Number Check Rule:</strong>
+          <p style="margin: 0 0 6px; font-weight: 400;">
+            An NHS number has 10 digits. The last digit is a <em>check digit</em> that's worked out from the first nine. If the last digit doesn't match, the number has a typo.
+          </p>
           <ol style="margin: 4px 0 8px 18px; padding: 0;">
-            <li>Multiply the first 9 digits by 10, 9, 8, 7, 6, 5, 4, 3, 2 and add them up.</li>
-            <li>Take the remainder after dividing by 11, then subtract it from 11 (11 counts as 0; 10 means invalid).</li>
-            <li>The result must equal the 10th digit.</li>
+            <li>Multiply each of the first 9 digits by its weight: <strong>10, 9, 8, 7, 6, 5, 4, 3, 2</strong> (left to right).</li>
+            <li>Add up the nine results.</li>
+            <li>Divide the total by 11 and keep the <strong>remainder</strong>.</li>
+            <li>Subtract the remainder from 11. That's the expected check digit.<br/>
+              <span style="font-size: 0.8rem; opacity: 0.85;">• If you get 11, the check digit is 0.<br/>• If you get 10, the number is invalid.</span>
+            </li>
+            <li>Compare it with the last digit of the number. If they match, it's valid.</li>
           </ol>
-          <strong>Records:</strong>
+          <div style="background: rgba(90, 35, 64, 0.06); border-radius: 8px; padding: 8px; margin-bottom: 8px; font-size: 0.8rem;">
+            <strong>Worked example: 999 234 5675</strong>
+            <div style="overflow-x: auto; margin: 4px 0;">
+              <table style="width: 100%; border-collapse: collapse; font-family: monospace; font-size: 0.76rem; text-align: center;">
+                <tr><th style="text-align:left; padding:2px 4px;">Digit</th><td>9</td><td>9</td><td>9</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td></tr>
+                <tr><th style="text-align:left; padding:2px 4px;">× Weight</th><td>10</td><td>9</td><td>8</td><td>7</td><td>6</td><td>5</td><td>4</td><td>3</td><td>2</td></tr>
+                <tr style="border-top: 1px solid rgba(90,35,64,0.2);"><th style="text-align:left; padding:2px 4px;">Result</th><td>90</td><td>81</td><td>72</td><td>14</td><td>18</td><td>20</td><td>20</td><td>18</td><td>14</td></tr>
+              </table>
+            </div>
+            <div>Sum = <strong>347</strong> · 347 ÷ 11 = 31 remainder <strong>6</strong> · 11 − 6 = <strong>5</strong> (matches 10th digit 5 → <strong>Valid ✓</strong>)</div>
+          </div>
+          <strong>Records to check:</strong>
           <div style="font-family: monospace; font-size: 0.9rem; margin-top: 4px;">
             A: 999 829 1930<br/>
             B: 999 016 6137<br/>
