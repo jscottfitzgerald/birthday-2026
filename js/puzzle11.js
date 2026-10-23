@@ -25,44 +25,35 @@ const DOOR_X = 1690;
 const TRIGGER_RADIUS = 56;
 const SAFE_RADIUS = 95;
 
-/* ---- EDIT ME (Scene 5 Departures Board Cipher) ----
+/* Scene 5 Departures Board Cipher:
    Each BOARDING row's gate is a letter position (1=A .. 26=Z), or "-" for space.
    Decoy rows have status DELAYED or CANCELLED.
-   Currently encodes "PLACEHOLDER MESSAGE":
-   P(16) L(12) A(1) C(3) E(5) H(8) O(15) L(12) D(4) E(5) R(18) -(space)
-   M(13) E(5) S(19) S(19) A(1) G(7) E(5)
-   Note: The decoded answer is derived from the BOARDING gates at runtime so
-   no plaintext destination/message string needs to sit in this file.
+   The decoded answer is derived from the BOARDING gates at runtime so
+   no plaintext message string sits in this file.
 */
 const DEPARTURES_ROWS = [
-  { time: "18:05", code: "BA402", gate: "16", status: "BOARDING" },
-  { time: "18:08", code: "EZ719", gate: "9",  status: "DELAYED" },
-  { time: "18:10", code: "VS104", gate: "12", status: "BOARDING" },
-  { time: "18:12", code: "LH908", gate: "1",  status: "BOARDING" },
-  { time: "18:15", code: "AF331", gate: "22", status: "CANCELLED" },
-  { time: "18:17", code: "KL612", gate: "3",  status: "BOARDING" },
-  { time: "18:20", code: "BA511", gate: "5",  status: "BOARDING" },
-  { time: "18:22", code: "IB840", gate: "14", status: "DELAYED" },
-  { time: "18:25", code: "EI205", gate: "8",  status: "BOARDING" },
-  { time: "18:27", code: "LX390", gate: "15", status: "BOARDING" },
-  { time: "18:30", code: "SK501", gate: "7",  status: "DELAYED" },
-  { time: "18:32", code: "BA618", gate: "12", status: "BOARDING" },
-  { time: "18:35", code: "TP442", gate: "4",  status: "BOARDING" },
-  { time: "18:37", code: "OS771", gate: "19", status: "CANCELLED" },
-  { time: "18:40", code: "AY832", gate: "5",  status: "BOARDING" },
-  { time: "18:42", code: "SN219", gate: "18", status: "BOARDING" },
-  { time: "18:45", code: "BA704", gate: "-",  status: "BOARDING" },
-  { time: "18:47", code: "EW410", gate: "11", status: "DELAYED" },
-  { time: "18:50", code: "VS250", gate: "13", status: "BOARDING" },
-  { time: "18:52", code: "LH944", gate: "5",  status: "BOARDING" },
-  { time: "18:55", code: "AF389", gate: "25", status: "DELAYED" },
-  { time: "18:57", code: "KL649", gate: "19", status: "BOARDING" },
-  { time: "19:00", code: "BA812", gate: "19", status: "BOARDING" },
-  { time: "19:02", code: "IB872", gate: "2",  status: "CANCELLED" },
-  { time: "19:05", code: "EI249", gate: "1",  status: "BOARDING" },
-  { time: "19:07", code: "LX415", gate: "7",  status: "BOARDING" },
-  { time: "19:10", code: "SK539", gate: "20", status: "DELAYED" },
-  { time: "19:12", code: "BA901", gate: "5",  status: "BOARDING" },
+  { time: "18:05", code: "BA402", gate: "9",  status: "BOARDING" },
+  { time: "18:08", code: "EZ719", gate: "17", status: "DELAYED" },
+  { time: "18:10", code: "VS104", gate: "14", status: "BOARDING" },
+  { time: "18:13", code: "LH908", gate: "20", status: "BOARDING" },
+  { time: "18:16", code: "AF331", gate: "6",  status: "CANCELLED" },
+  { time: "18:19", code: "KL612", gate: "15", status: "BOARDING" },
+  { time: "18:22", code: "BA511", gate: "-",  status: "BOARDING" },
+  { time: "18:25", code: "IB840", gate: "23", status: "DELAYED" },
+  { time: "18:28", code: "EI205", gate: "20", status: "BOARDING" },
+  { time: "18:31", code: "LX390", gate: "8",  status: "BOARDING" },
+  { time: "18:34", code: "SK501", gate: "11", status: "DELAYED" },
+  { time: "18:37", code: "BA618", gate: "5",  status: "BOARDING" },
+  { time: "18:40", code: "TP442", gate: "-",  status: "BOARDING" },
+  { time: "18:43", code: "OS771", gate: "2",  status: "CANCELLED" },
+  { time: "18:46", code: "AY832", gate: "3",  status: "BOARDING" },
+  { time: "18:49", code: "SN219", gate: "12", status: "BOARDING" },
+  { time: "18:52", code: "EW410", gate: "25", status: "DELAYED" },
+  { time: "18:55", code: "VS250", gate: "15", status: "BOARDING" },
+  { time: "18:58", code: "LH944", gate: "21", status: "BOARDING" },
+  { time: "19:01", code: "AF389", gate: "7",  status: "DELAYED" },
+  { time: "19:04", code: "KL649", gate: "4",  status: "BOARDING" },
+  { time: "19:07", code: "BA812", gate: "19", status: "BOARDING" },
 ];
 
 function decodeDeparturesAnswer() {
@@ -75,8 +66,6 @@ function decodeDeparturesAnswer() {
     .join("");
 }
 
-const FINAL_COMPLETION_MESSAGE =
-  "You've cracked all five scenes and decoded the departures board!";
 const FINAL_BUTTON = "OK";
 
 const SCENES = [
@@ -469,7 +458,7 @@ function buildSceneDOM() {
     board.className = "p11-board-prop";
     board.style.left = `${FINAL_INTERACTIVE_X - 90}px`;
     board.textContent =
-      "DEPARTURES · T3\n18:05 BA402 ████ G16 BRD\n18:08 EZ719 ████ G09 DLY\n18:10 VS104 ████ G12 BRD";
+      "DEPARTURES · T3\n18:05 BA402 ████ G09 BRD\n18:08 EZ719 ████ G17 DLY\n18:10 VS104 ████ G14 BRD";
     world.appendChild(board);
   }
 
@@ -660,7 +649,7 @@ function showFinalCompletionModal() {
 
   const p = document.createElement("p");
   p.style.cssText = "font-size: 1.06rem; font-weight: 600; margin-bottom: 18px; white-space: pre-line;";
-  p.textContent = FINAL_COMPLETION_MESSAGE;
+  p.textContent = `You've cracked all five scenes!\n\nYour clue: “${decodeDeparturesAnswer()}”`;
 
   const btn = document.createElement("button");
   btn.type = "button";
