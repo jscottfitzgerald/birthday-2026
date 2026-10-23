@@ -85,6 +85,13 @@ const PUZZLES = [
     href: "puzzle10.html",
     // no rewardHref: this puzzle has no reward page
   },
+  {
+    key: "puzzle11",
+    title: "Puzzle 11: Five Scenes",
+    icon: "🚪",
+    href: "puzzle11.html",
+    // no rewardHref: this puzzle has no reward page
+  },
 ];
 
 function renderPuzzleList() {

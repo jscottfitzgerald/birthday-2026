@@ -78,7 +78,14 @@ function isLocalHost(hostname) {
  */
 // Puzzles that have no reward page: once solved, visitors go to the landing
 // page instead of a reward page.
-const PUZZLES_WITHOUT_REWARD = ["puzzle6", "puzzle7", "puzzle8", "puzzle9", "puzzle10"];
+const PUZZLES_WITHOUT_REWARD = [
+  "puzzle6",
+  "puzzle7",
+  "puzzle8",
+  "puzzle9",
+  "puzzle10",
+  "puzzle11",
+];
 
 (function autoLockSolvedPuzzle() {
   const path = window.location.pathname;

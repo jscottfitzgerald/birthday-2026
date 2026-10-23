@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Puzzle 11 · The Birthday Games</title>
+<link rel="stylesheet" href="css/style.css?v=14" />
+</head>
+<body>
+  <div class="container">
+    <h1>🚪 Five Scenes 🚪</h1>
+
+    <div class="bs-indicator-row">
+      <span class="bs-indicator" id="p11Progress">Scene 1 of 5 · Data Centre</span>
+    </div>
+
+    <div class="p11-story-banner" id="p11StoryBanner"></div>
+    <p class="nav-hint" id="p11NavHint">Swipe left/right to walk · Swipe up to jump · Swipe down to duck · Tap the glowing object to inspect</p>
+
+    <div class="p11-stage" id="p11Stage">
+      <div class="p8-status-banner" id="p11StatusBanner"></div>
+      <div class="p11-bg-layer" id="p11BgLayer"></div>
+      <div class="nav-parallax" id="p11Parallax"></div>
+      <div class="nav-world" id="p11World"></div>
+      <div class="p11-floor" id="p11Floor"></div>
+      <img
+        id="p11Character"
+        class="nav-character"
+        src="images/birthday-photo.png"
+        alt="Your character"
+        style="bottom: 24%;"
+      />
+    </div>
+
+    <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 10px;">
+      <button type="button" class="queens-btn" id="p11OpenPuzzleBtn">🔍 Inspect Object</button>
+      <button type="button" class="queens-btn" id="p11TestSkipBtn" style="display: none;">⏭️ Skip Scene (test)</button>
+      <button type="button" class="queens-btn" id="p11TestResetBtn" style="display: none;">🔄 Reset Scenes (test)</button>
+    </div>
+
+    <a href="index.html" class="back-link">← Back to The Birthday Games</a>
+  </div>
+
+  <div class="question-dialog" id="p11Dialog" style="max-height: 86vh; overflow-y: auto;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+      <span class="bs-indicator" id="p11DialogTitle"></span>
+      <button type="button" class="queens-btn" id="p11CloseDialogBtn" style="padding: 4px 10px; font-size: 0.8rem;">✕ Close</button>
+    </div>
+    <div id="p11DialogContent"></div>
+    <p id="p11QuestionText" style="margin: 8px 0 8px;"></p>
+
+    <div style="margin-bottom: 10px;">
+      <button type="button" class="queens-btn" id="p11HintBtn">💡 Hint</button>
+      <p id="p11HintText" style="display: none; font-style: italic; font-size: 0.88rem; margin: 6px 0 0; opacity: 0.85;"></p>
+    </div>
+
+    <form class="answer-form" id="p11AnswerForm">
+      <input
+        type="text"
+        id="p11AnswerInput"
+        placeholder="Type your answer..."
+        autocomplete="off"
+        required
+      />
+      <button type="submit" class="btn">Submit</button>
+      <div class="feedback" id="p11Feedback"></div>
+    </form>
+  </div>
+
+  <script src="js/progress.js?v=9"></script>
+  <script src="js/hearts.js?v=6"></script>
+  <script src="js/puzzle11.js?v=6"></script>
+</body>
+</html>
